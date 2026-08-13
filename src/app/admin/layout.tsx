@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AppShell } from "@/presentation/ui/components/AppShell";
 import { useUsuarioLogado } from "@/presentation/ui/features/auth/useUsuarioLogado";
+import { SistemaSelecionadoProvider } from "@/presentation/ui/features/sistemas/SistemaSelecionadoContext";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -20,8 +21,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <AppShell usuario={usuario}>
-      <div className="p-4">{children}</div>
-    </AppShell>
+    <SistemaSelecionadoProvider>
+      <AppShell usuario={usuario}>
+        <div className="p-4">{children}</div>
+      </AppShell>
+    </SistemaSelecionadoProvider>
   );
 }

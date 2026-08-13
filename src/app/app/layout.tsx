@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { AppShell } from "@/presentation/ui/components/AppShell";
 import { useUsuarioLogado } from "@/presentation/ui/features/auth/useUsuarioLogado";
+import { SistemaSelecionadoProvider } from "@/presentation/ui/features/sistemas/SistemaSelecionadoContext";
 
 export default function AppRouteLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -19,5 +20,9 @@ export default function AppRouteLayout({ children }: { children: React.ReactNode
     return <div className="flex min-h-screen items-center justify-center bg-background" />;
   }
 
-  return <AppShell usuario={usuario}>{children}</AppShell>;
+  return (
+    <SistemaSelecionadoProvider>
+      <AppShell usuario={usuario}>{children}</AppShell>
+    </SistemaSelecionadoProvider>
+  );
 }

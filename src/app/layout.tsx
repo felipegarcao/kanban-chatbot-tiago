@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/presentation/ui/providers/QueryProvider";
-import { SistemaSelecionadoProvider } from "@/presentation/ui/features/sistemas/SistemaSelecionadoContext";
 import { SCRIPT_TEMA } from "@/presentation/ui/lib/theme";
 import "./globals.css";
 
@@ -27,9 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_TEMA }} />
       </head>
       <body className="min-h-full flex flex-col font-sans antialiased">
-        <QueryProvider>
-          <SistemaSelecionadoProvider>{children}</SistemaSelecionadoProvider>
-        </QueryProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );

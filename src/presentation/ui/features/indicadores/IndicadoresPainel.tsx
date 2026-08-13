@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Clock, MessagesSquare, TriangleAlert, Wallet } from "lucide-react";
+import { CheckCircle2, Clock, MessagesSquare, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 import { DateRangeFilter } from "@/presentation/ui/components/DateRangeFilter";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
@@ -9,7 +9,7 @@ import { intervaloPadrao } from "@/presentation/ui/lib/dateRange";
 import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
 import { BarraHorizontal, type ItemBarra } from "./BarraHorizontal";
 import { ChartCard } from "./ChartCard";
-import { formatarDuracao, formatarMoeda, formatarNumero, formatarPercentual } from "./formatadores";
+import { formatarDuracao, formatarNumero, formatarPercentual } from "./formatadores";
 import { GraficoLinha } from "./GraficoLinha";
 import { GraficoOperadores } from "./GraficoOperadores";
 import { COR_PRIORIDADE, COR_STATUS, ORDEM_STATUS, ROTULO_PRIORIDADE, ROTULO_STATUS } from "./rotulos";
@@ -28,8 +28,8 @@ export function IndicadoresPainel({ sistemaId }: { sistemaId: number }) {
       </div>
 
       {indicadores.isPending && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {Array.from({ length: 5 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-24" />
           ))}
         </div>
@@ -41,7 +41,7 @@ export function IndicadoresPainel({ sistemaId }: { sistemaId: number }) {
 
       {indicadores.isSuccess && (
         <>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatCard rotulo="Conversas no período" valor={formatarNumero(indicadores.data.totalConversas)} Icone={MessagesSquare} />
             <StatCard
               rotulo="Resolvidas"
@@ -55,7 +55,6 @@ export function IndicadoresPainel({ sistemaId }: { sistemaId: number }) {
               tom={indicadores.data.conversasCriticas > 0 ? "critico" : "neutro"}
               Icone={TriangleAlert}
             />
-            <StatCard rotulo="Valor confirmado" valor={formatarMoeda(indicadores.data.valorTotalConfirmado)} Icone={Wallet} />
             <StatCard
               rotulo="Tempo médio de atendimento"
               valor={formatarDuracao(indicadores.data.tempoMedioAtendimentoMinutos)}
