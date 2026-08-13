@@ -14,6 +14,7 @@ import { N8nWebhookFinalizarAtendimento } from "@/infra/webhooks/N8nWebhookFinal
 import { env } from "@/infra/config/env";
 
 import { AutenticarUsuario } from "@/core/application/use-cases/AutenticarUsuario";
+import { RegistrarUsuario } from "@/core/application/use-cases/RegistrarUsuario";
 import { ObterUsuarioLogado } from "@/core/application/use-cases/ObterUsuarioLogado";
 import { ListarColunasDoProjeto } from "@/core/application/use-cases/ListarColunasDoProjeto";
 import { ListarConversasDoProjeto } from "@/core/application/use-cases/ListarConversasDoProjeto";
@@ -59,6 +60,7 @@ function montarContainer() {
     sessoes,
     useCases: {
       autenticarUsuario: new AutenticarUsuario(usuarios, usuarioSistemas, hasher, sessoes),
+      registrarUsuario: new RegistrarUsuario(usuarios, hasher, sessoes),
       obterUsuarioLogado: new ObterUsuarioLogado(sessoes, usuarios, usuarioSistemas),
 
       listarColunasDoProjeto: new ListarColunasDoProjeto(colunas),

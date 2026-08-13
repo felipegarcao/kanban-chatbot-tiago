@@ -1,3 +1,5 @@
+import type { NextRequest } from "next/server";
+
 /**
  * Rate limit em memória para o login (5 tentativas / 15 min por email+IP). Suficiente para
  * uma instância única do painel; não sobrevive a restart nem escala pra múltiplas instâncias
@@ -34,4 +36,36 @@ export function registrarTentativaFalha(chave: string): void {
 
 export function limparTentativas(chave: string): void {
   tentativasPorChave.delete(chave);
+}
+
+/**
+ * Limite separado para autocadastro público: como o link fica aberto pra qualquer um, conta
+ * toda tentativa (sucesso incluso, não só falha) — o objetivo é limitar quantas contas um
+ * mesmo IP consegue criar, não só travar tentativas malsucedidas.
+ */
+const JANELA_REGISTRO_MS = 60 * 60 * 1000;
+const LIMITE_REGISTROS = 5;
+const registrosPorChave = new Map<string, Registro>();
+
+export function excedeuLimiteDeRegistro(chave: string): boolean {
+  const registro = registrosPorChave.get(chave);
+  if (!registro) return false;
+  if (Date.now() - registro.desde > JANELA_REGISTRO_MS) {
+    registrosPorChave.delete(chave);
+    return false;
+  }
+  return registro.tentativas >= LIMITE_REGISTROS;
+}
+
+export function registrarTentativaDeRegistro(chave: string): void {
+  const registro = registrosPorChave.get(chave);
+  if (!registro || Date.now() - registro.desde > JANELA_REGISTRO_MS) {
+    registrosPorChave.set(chave, { tentativas: 1, desde: Date.now() });
+    return;
+  }
+  registro.tentativas += 1;
+}
+
+export function obterIp(req: NextRequest): string {
+  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "desconhecido";
 }

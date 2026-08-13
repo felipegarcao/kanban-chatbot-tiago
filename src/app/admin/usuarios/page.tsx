@@ -56,6 +56,17 @@ export default function AdminUsuariosPage() {
               render: (u) => <Badge tom={u.ativo ? "acento" : "neutro"}>{u.ativo ? "Ativo" : "Inativo"}</Badge>,
             },
             {
+              header: "Acesso",
+              render: (u) =>
+                u.sistemasPermitidos.length === 0 ? (
+                  <Badge tom="critico">Sem projeto</Badge>
+                ) : (
+                  <span className="text-muted">
+                    {u.sistemasPermitidos.length} projeto{u.sistemasPermitidos.length > 1 ? "s" : ""}
+                  </span>
+                ),
+            },
+            {
               header: "",
               className: "w-0",
               render: (u) => (
@@ -90,7 +101,10 @@ export default function AdminUsuariosPage() {
                 <Badge tom={u.ativo ? "acento" : "neutro"}>{u.ativo ? "Ativo" : "Inativo"}</Badge>
               </div>
               <span className="text-xs text-muted">{u.email}</span>
-              <span className="text-xs capitalize text-muted">{u.papel}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs capitalize text-muted">{u.papel}</span>
+                {u.sistemasPermitidos.length === 0 && <Badge tom="critico">Sem projeto</Badge>}
+              </div>
               <div className="mt-1 flex gap-2">
                 <Link
                   href={`/admin/usuarios/${u.id}/editar`}

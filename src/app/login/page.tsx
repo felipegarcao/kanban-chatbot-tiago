@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LogIn, Lock, Mail } from "lucide-react";
 import { Suspense, useState, type FormEvent } from "react";
@@ -89,6 +90,13 @@ function LoginForm() {
             Entrar
           </Button>
         </form>
+
+        <p className="mt-4 text-center text-sm text-muted">
+          Não tem conta?{" "}
+          <Link href="/registrar" className="font-medium text-accent hover:underline">
+            Criar conta
+          </Link>
+        </p>
       </div>
     </main>
   );

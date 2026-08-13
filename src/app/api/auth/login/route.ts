@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { container } from "@/infra/container";
 import { errorParaResposta } from "@/presentation/http/errorParaResposta";
-import { excedeuLimiteDeTentativas, limparTentativas, registrarTentativaFalha } from "@/presentation/http/rateLimiter";
+import {
+  excedeuLimiteDeTentativas,
+  limparTentativas,
+  obterIp,
+  registrarTentativaFalha,
+} from "@/presentation/http/rateLimiter";
 import { loginSchema } from "@/presentation/http/schemas/auth";
 import { definirCookieSessao } from "@/presentation/http/sessionCookie";
-
-function obterIp(req: NextRequest): string {
-  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "desconhecido";
-}
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const corpo = loginSchema.safeParse(await req.json().catch(() => null));
