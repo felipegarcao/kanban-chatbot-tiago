@@ -15,6 +15,17 @@
   --success: #15803d;
   --warning: #b45309;
   --ring: #4f46e5;
+  /* Paleta categórica (identidade), ordem fixa — validada via scripts/validate_palette.js
+     da skill dataviz contra --surface: #ffffff (PASS lightness/chroma/CVD; WARN contraste em
+     chart-3/chart-4/chart-5, por isso esses slots sempre levam rótulo direto, nunca só cor). */
+  --chart-1: #2a78d6;
+  --chart-2: #eb6834;
+  --chart-3: #1baf7a;
+  --chart-4: #eda100;
+  --chart-5: #e87ba4;
+  --chart-6: #008300;
+  --chart-7: #4a3aa7;
+  --chart-8: #e34948;
 }
 
 .dark {
@@ -30,6 +41,15 @@
   --success: #4ade80;
   --warning: #fbbf24;
   --ring: #818cf8;
+  /* Mesma paleta, passo escuro — validada contra --surface: #151517 (PASS em tudo, inclusive contraste). */
+  --chart-1: #3987e5;
+  --chart-2: #d95926;
+  --chart-3: #199e70;
+  --chart-4: #c98500;
+  --chart-5: #d55181;
+  --chart-6: #008300;
+  --chart-7: #9085e9;
+  --chart-8: #e66767;
 }
 
 @theme inline {
@@ -45,6 +65,14 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

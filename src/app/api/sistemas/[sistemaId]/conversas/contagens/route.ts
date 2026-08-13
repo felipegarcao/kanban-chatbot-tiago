@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { container } from "@/infra/container";
 import { errorParaResposta } from "@/presentation/http/errorParaResposta";
+import { lerIntervaloDaQuery } from "@/presentation/http/intervaloDeDatas";
 import { obterUsuarioDaRequisicao } from "@/presentation/http/obterUsuarioDaRequisicao";
 
 export async function GET(
@@ -13,11 +14,16 @@ export async function GET(
   }
 
   const { sistemaId } = await params;
+  const url = new URL(req.url);
+  const { intervalo, erro: erroIntervalo } = lerIntervaloDaQuery(url);
+  if (erroIntervalo) return erroIntervalo;
 
   try {
     const contagens = await container().useCases.contarConversasPorStatus.execute({
       sistemaId: Number(sistemaId),
       sistemasPermitidos: usuario.sistemasPermitidos,
+      dataInicio: intervalo.dataInicio,
+      dataFim: intervalo.dataFim,
     });
     return NextResponse.json(contagens);
   } catch (erro) {

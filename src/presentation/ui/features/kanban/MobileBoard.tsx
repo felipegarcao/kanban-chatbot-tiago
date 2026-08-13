@@ -3,11 +3,13 @@
 import { ChevronDown, Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/presentation/ui/components/Button";
+import { DateRangeFilter } from "@/presentation/ui/components/DateRangeFilter";
 import { Field } from "@/presentation/ui/components/Field";
 import { PullToRefresh } from "@/presentation/ui/components/PullToRefresh";
 import { CardSkeleton } from "@/presentation/ui/components/Skeleton";
 import { EmptyState } from "@/presentation/ui/components/EmptyState";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
+import { intervaloPadrao, type IntervaloDeDatas } from "@/presentation/ui/lib/dateRange";
 import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
 import type { StatusConversa } from "@/core/domain/Conversa";
 import { ConversaDrawer } from "./ConversaDrawer";
@@ -19,9 +21,10 @@ import { useMoverConversa } from "./useMoverConversa";
 
 export function MobileBoard({ sistemaId }: { sistemaId: number }) {
   const [busca, setBusca] = useState("");
+  const [intervalo, setIntervalo] = useState(intervaloPadrao);
   const [conversaSelecionadaId, setConversaSelecionadaId] = useState<number | null>(null);
   const colunas = useColunas(sistemaId);
-  const contagens = useContagens(sistemaId);
+  const contagens = useContagens(sistemaId, intervalo);
   const [statusAtivo, setStatusAtivo] = useState<StatusConversa | null>(null);
 
   const chaveAtiva = statusAtivo ?? colunas.data?.[0]?.chave ?? null;
@@ -47,7 +50,7 @@ export function MobileBoard({ sistemaId }: { sistemaId: number }) {
         ))}
       </div>
 
-      <div className="border-b border-border bg-surface px-3 py-2">
+      <div className="flex flex-col gap-2 border-b border-border bg-surface px-3 py-2">
         <Field
           label="Buscar"
           type="search"
@@ -57,6 +60,7 @@ export function MobileBoard({ sistemaId }: { sistemaId: number }) {
           onChange={(e) => setBusca(e.target.value)}
           aria-label="Buscar conversas por nome ou telefone"
         />
+        <DateRangeFilter value={intervalo} onChange={setIntervalo} />
       </div>
 
       {chaveAtiva && (
@@ -64,6 +68,7 @@ export function MobileBoard({ sistemaId }: { sistemaId: number }) {
           sistemaId={sistemaId}
           status={chaveAtiva}
           busca={busca}
+          intervalo={intervalo}
           onSelecionarConversa={setConversaSelecionadaId}
         />
       )}
@@ -79,15 +84,17 @@ function ListaDaColuna({
   sistemaId,
   status,
   busca,
+  intervalo,
   onSelecionarConversa,
 }: {
   sistemaId: number;
   status: StatusConversa;
   busca: string;
+  intervalo: IntervaloDeDatas;
   onSelecionarConversa: (id: number) => void;
 }) {
-  const query = useConversasDaColuna(sistemaId, status, busca);
-  const mover = useMoverConversa(sistemaId, busca);
+  const query = useConversasDaColuna(sistemaId, status, busca, intervalo);
+  const mover = useMoverConversa(sistemaId, busca, intervalo);
   const conversas = query.data?.pages.flatMap((p) => p.itens) ?? [];
 
   return (

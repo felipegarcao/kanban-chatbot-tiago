@@ -5,6 +5,7 @@ import { CardSkeleton } from "@/presentation/ui/components/Skeleton";
 import { EmptyState } from "@/presentation/ui/components/EmptyState";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
 import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
+import type { IntervaloDeDatas } from "@/presentation/ui/lib/dateRange";
 import { ConversaCard } from "./ConversaCard";
 import { useConversasDaColuna } from "./useConversasDaColuna";
 import { useMoverConversa } from "./useMoverConversa";
@@ -15,13 +16,14 @@ interface KanbanColunaProps {
   sistemaId: number;
   coluna: ColunaResumo;
   busca: string;
+  intervalo: IntervaloDeDatas;
   total: number | undefined;
   onSelecionarConversa: (conversaId: number) => void;
 }
 
-export function KanbanColuna({ sistemaId, coluna, busca, total, onSelecionarConversa }: KanbanColunaProps) {
-  const query = useConversasDaColuna(sistemaId, coluna.chave, busca);
-  const mover = useMoverConversa(sistemaId, busca);
+export function KanbanColuna({ sistemaId, coluna, busca, intervalo, total, onSelecionarConversa }: KanbanColunaProps) {
+  const query = useConversasDaColuna(sistemaId, coluna.chave, busca, intervalo);
+  const mover = useMoverConversa(sistemaId, busca, intervalo);
   const conversas = query.data?.pages.flatMap((p) => p.itens) ?? [];
   const { setNodeRef, isOver } = useDroppable({ id: coluna.chave });
 

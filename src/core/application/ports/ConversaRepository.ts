@@ -6,6 +6,9 @@ export interface FiltroConversas {
   busca?: string;
   cursor?: string | null;
   limite: number;
+  /** Filtra por `ultima_mensagem_em` — "o que teve atividade nesse intervalo", não "o que foi criado nele". */
+  dataInicio: Date;
+  dataFim: Date;
 }
 
 export interface PaginaConversas {
@@ -18,6 +21,6 @@ export interface ConversaRepository {
   /** Relê a linha com `SELECT ... FOR UPDATE`. Só faz sentido dentro de uma transação do UnitOfWork. */
   buscarPorIdParaAtualizacao(id: number): Promise<Conversa | null>;
   listarPorProjeto(filtro: FiltroConversas): Promise<PaginaConversas>;
-  contarPorStatus(sistemaId: number): Promise<Record<string, number>>;
+  contarPorStatus(sistemaId: number, dataInicio: Date, dataFim: Date): Promise<Record<string, number>>;
   salvar(conversa: Conversa): Promise<void>;
 }

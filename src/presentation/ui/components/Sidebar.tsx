@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FolderKanban, LogOut, MessagesSquare, Users } from "lucide-react";
+import { BarChart3, FolderKanban, LogOut, MessagesSquare, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SistemaSelector } from "@/presentation/ui/components/SistemaSelector";
 import { ThemeToggle } from "@/presentation/ui/components/ThemeToggle";
@@ -18,6 +18,7 @@ interface ItemNav {
 
 const ITENS_NAV: ItemNav[] = [
   { href: "/app", rotulo: "Conversas", Icone: MessagesSquare },
+  { href: "/app/indicadores", rotulo: "Indicadores", Icone: BarChart3 },
   { href: "/admin", rotulo: "Projetos", Icone: FolderKanban, somenteAdmin: true },
   { href: "/admin/usuarios", rotulo: "Usuários", Icone: Users, somenteAdmin: true },
 ];

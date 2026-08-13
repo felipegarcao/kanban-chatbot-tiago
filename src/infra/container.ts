@@ -6,6 +6,7 @@ import { PgConversaRepository } from "@/infra/db/repositories/PgConversaReposito
 import { PgMensagemRepository } from "@/infra/db/repositories/PgMensagemRepository";
 import { PgEventoRepository } from "@/infra/db/repositories/PgEventoRepository";
 import { PgColunaRepository } from "@/infra/db/repositories/PgColunaRepository";
+import { PgIndicadoresRepository } from "@/infra/db/repositories/PgIndicadoresRepository";
 import { PgUnitOfWork } from "@/infra/db/repositories/PgUnitOfWork";
 import { ArgonHasher } from "@/infra/auth/ArgonHasher";
 import { JoseSessionService } from "@/infra/auth/JoseSessionService";
@@ -36,6 +37,7 @@ import { EditarUsuario } from "@/core/application/use-cases/EditarUsuario";
 import { DeletarUsuario } from "@/core/application/use-cases/DeletarUsuario";
 import { DeletarProjeto } from "@/core/application/use-cases/DeletarProjeto";
 import { ConfigurarColunasDoProjeto } from "@/core/application/use-cases/ConfigurarColunasDoProjeto";
+import { ObterIndicadoresDoProjeto } from "@/core/application/use-cases/ObterIndicadoresDoProjeto";
 
 /**
  * Composition root: único lugar que instancia repositórios concretos e monta casos de uso.
@@ -49,6 +51,7 @@ function montarContainer() {
   const mensagens = new PgMensagemRepository(pool);
   const eventos = new PgEventoRepository(pool);
   const colunas = new PgColunaRepository(pool);
+  const indicadores = new PgIndicadoresRepository(pool);
   const unitOfWork = new PgUnitOfWork(pool);
 
   const hasher = new ArgonHasher();
@@ -64,8 +67,8 @@ function montarContainer() {
       obterUsuarioLogado: new ObterUsuarioLogado(sessoes, usuarios, usuarioSistemas),
 
       listarColunasDoProjeto: new ListarColunasDoProjeto(colunas),
-      listarConversasDoProjeto: new ListarConversasDoProjeto(conversas),
-      contarConversasPorStatus: new ContarConversasPorStatus(conversas),
+      listarConversasDoProjeto: new ListarConversasDoProjeto(conversas, clock),
+      contarConversasPorStatus: new ContarConversasPorStatus(conversas, clock),
       obterDetalheDaConversa: new ObterDetalheDaConversa(conversas, mensagens, eventos),
       moverConversaDeStatus: new MoverConversaDeStatus(unitOfWork, clock),
       assumirConversa: new AssumirConversa(unitOfWork, clock),
@@ -84,6 +87,7 @@ function montarContainer() {
       deletarUsuario: new DeletarUsuario(usuarios),
       deletarProjeto: new DeletarProjeto(projetos),
       configurarColunasDoProjeto: new ConfigurarColunasDoProjeto(colunas),
+      obterIndicadoresDoProjeto: new ObterIndicadoresDoProjeto(indicadores, clock),
     },
   };
 }

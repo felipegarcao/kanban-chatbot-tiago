@@ -70,6 +70,9 @@ export class PgConversaRepository implements ConversaRepository {
       condicoes.push(`(c.contato_nome ILIKE $${idx} OR c.contato_telefone ILIKE $${idx})`);
     }
 
+    params.push(filtro.dataInicio, filtro.dataFim);
+    condicoes.push(`c.ultima_mensagem_em BETWEEN $${params.length - 1} AND $${params.length}`);
+
     if (filtro.cursor) {
       const cursor = decodificarCursor(filtro.cursor);
       params.push(cursor.rank, cursor.ultimaMensagemEm, cursor.id);
@@ -103,11 +106,12 @@ export class PgConversaRepository implements ConversaRepository {
     return { itens: pagina.map(paraDominio), proximoCursor };
   }
 
-  async contarPorStatus(sistemaId: number): Promise<Record<string, number>> {
+  async contarPorStatus(sistemaId: number, dataInicio: Date, dataFim: Date): Promise<Record<string, number>> {
     const { rows } = await this.db.query<{ status: string; total: string }>(
       `SELECT status, COUNT(*)::text AS total FROM felipe_system.conversas
-       WHERE sistema_id = $1 GROUP BY status`,
-      [sistemaId],
+       WHERE sistema_id = $1 AND ultima_mensagem_em BETWEEN $2 AND $3
+       GROUP BY status`,
+      [sistemaId, dataInicio, dataFim],
     );
     return Object.fromEntries(rows.map((r) => [r.status, Number(r.total)]));
   }

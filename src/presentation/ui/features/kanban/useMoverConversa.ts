@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient, type InfiniteData } from "@tanstack/react-query";
 import { httpClient } from "@/presentation/ui/lib/httpClient";
+import type { IntervaloDeDatas } from "@/presentation/ui/lib/dateRange";
 import type { StatusConversa } from "@/core/domain/Conversa";
 import type { ConversaResumo, PaginaConversasResumo } from "./types";
 
@@ -15,7 +16,7 @@ type CacheConversas = InfiniteData<PaginaConversasResumo, string | null>;
  * servidor chegar. Se a API recusar (ex.: conflito de concorrência com o n8n), desfaz e o
  * card volta pra onde estava — nunca fica "preso" na coluna errada silenciosamente.
  */
-export function useMoverConversa(sistemaId: number, busca: string) {
+export function useMoverConversa(sistemaId: number, busca: string, intervalo: IntervaloDeDatas) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -23,9 +24,9 @@ export function useMoverConversa(sistemaId: number, busca: string) {
       httpClient.post<{ status: StatusConversa }>(`/api/conversas/${conversa.id}/mover`, { novoStatus }),
 
     onMutate: async ({ conversa, novoStatus }) => {
-      const origemKey = ["conversas", sistemaId, conversa.status, busca];
-      const destinoKey = ["conversas", sistemaId, novoStatus, busca];
-      const contagensKey = ["contagens", sistemaId];
+      const origemKey = ["conversas", sistemaId, conversa.status, busca, intervalo.de, intervalo.ate];
+      const destinoKey = ["conversas", sistemaId, novoStatus, busca, intervalo.de, intervalo.ate];
+      const contagensKey = ["contagens", sistemaId, intervalo.de, intervalo.ate];
 
       await Promise.all([
         queryClient.cancelQueries({ queryKey: origemKey }),

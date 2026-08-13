@@ -29,7 +29,7 @@ export class FakeConversaRepository implements ConversaRepository {
     throw new Error("não usado nestes testes");
   }
 
-  async contarPorStatus(_sistemaId: number): Promise<Record<string, number>> {
+  async contarPorStatus(_sistemaId: number, _dataInicio: Date, _dataFim: Date): Promise<Record<string, number>> {
     throw new Error("não usado nestes testes");
   }
 
