@@ -1,7 +1,10 @@
 import type { NovoProjeto, ProjetoRepository } from "@/core/application/ports/ProjetoRepository";
 import type { Queryable } from "@/core/application/ports/Queryable";
+import { ProjetoPossuiConversas } from "@/core/domain/errors/DomainError";
 import type { Projeto } from "@/core/domain/Projeto";
 import { paraDominio, type ProjetoRow } from "@/infra/db/mappers/projetoMapper";
+
+const CODIGO_PG_VIOLACAO_FK = "23503";
 
 export class PgProjetoRepository implements ProjetoRepository {
   constructor(private readonly db: Queryable) {}
@@ -47,5 +50,16 @@ export class PgProjetoRepository implements ProjetoRepository {
       `UPDATE felipe_system.sistemas SET nome = $2, descricao = $3, ativo = $4 WHERE id = $1`,
       [props.id, props.nome, props.descricao, props.ativo],
     );
+  }
+
+  async deletar(id: number): Promise<void> {
+    try {
+      await this.db.query(`DELETE FROM felipe_system.sistemas WHERE id = $1`, [id]);
+    } catch (erro) {
+      if (erro && typeof erro === "object" && "code" in erro && erro.code === CODIGO_PG_VIOLACAO_FK) {
+        throw new ProjetoPossuiConversas();
+      }
+      throw erro;
+    }
   }
 }

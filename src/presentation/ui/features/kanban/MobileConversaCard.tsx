@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, ArrowRight, Clock, CreditCard, Eye, Phone } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/presentation/ui/components/Badge";
 import { BottomSheet } from "@/presentation/ui/components/BottomSheet";
@@ -38,18 +39,27 @@ export function MobileConversaCard({ conversa, onVerDetalhe, onMover }: MobileCo
       >
         <div className="flex items-start justify-between gap-2">
           <span className="text-sm font-medium text-foreground">{conversa.contatoNome ?? "Sem nome"}</span>
-          {conversa.prioridade === "critica" && <Badge tom="critico">Crítica</Badge>}
+          {conversa.prioridade === "critica" && (
+            <Badge tom="critico">
+              <AlertTriangle size={11} aria-hidden="true" /> Crítica
+            </Badge>
+          )}
         </div>
-        <span className="text-xs text-muted">{formatarTelefone(conversa.contatoTelefone)}</span>
+        <span className="flex items-center gap-1.5 text-xs text-muted">
+          <Phone size={12} aria-hidden="true" /> {formatarTelefone(conversa.contatoTelefone)}
+        </span>
         {conversa.ultimaMensagemTrecho && (
           <p className="line-clamp-2 text-sm text-foreground/80">{conversa.ultimaMensagemTrecho}</p>
         )}
-        <span className="text-xs text-muted">{tempoRelativo(conversa.ultimaMensagemEm)}</span>
+        <span className="flex items-center gap-1 text-xs text-muted">
+          <Clock size={12} aria-hidden="true" /> {tempoRelativo(conversa.ultimaMensagemEm)}
+        </span>
       </button>
 
       {sheetAberto && (
         <BottomSheet titulo={conversa.contatoNome ?? "Conversa"} onFechar={() => setSheetAberto(false)}>
           <SheetBotao
+            icone={Eye}
             onClick={() => {
               setSheetAberto(false);
               onVerDetalhe();
@@ -60,6 +70,7 @@ export function MobileConversaCard({ conversa, onVerDetalhe, onMover }: MobileCo
 
           {conversa.status === "aguardando_financeiro" && (
             <SheetBotao
+              icone={CreditCard}
               onClick={() => {
                 setSheetAberto(false);
                 setModalPagamentoAberto(true);
@@ -72,6 +83,7 @@ export function MobileConversaCard({ conversa, onVerDetalhe, onMover }: MobileCo
           {alvos.map((status) => (
             <SheetBotao
               key={status}
+              icone={ArrowRight}
               onClick={() => {
                 setSheetAberto(false);
                 onMover(status);
@@ -95,13 +107,22 @@ export function MobileConversaCard({ conversa, onVerDetalhe, onMover }: MobileCo
   );
 }
 
-function SheetBotao({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+function SheetBotao({
+  children,
+  onClick,
+  icone: Icone,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  icone: typeof Eye;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="min-h-[44px] rounded-md px-3 py-2.5 text-left text-sm text-foreground hover:bg-border/40 focus-visible:outline-2 focus-visible:outline-ring"
+      className="flex min-h-[44px] items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-foreground hover:bg-border/40 focus-visible:outline-2 focus-visible:outline-ring"
     >
+      <Icone size={16} className="text-muted" aria-hidden="true" />
       {children}
     </button>
   );

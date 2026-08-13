@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown, Search } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/presentation/ui/components/Button";
 import { Field } from "@/presentation/ui/components/Field";
@@ -49,6 +50,7 @@ export function MobileBoard({ sistemaId }: { sistemaId: number }) {
         <Field
           label="Buscar"
           type="search"
+          icone={Search}
           placeholder="Nome ou telefone"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
@@ -112,6 +114,7 @@ function ListaDaColuna({
         {query.hasNextPage && (
           <Button
             variante="secondary"
+            icone={ChevronDown}
             carregando={query.isFetchingNextPage}
             onClick={() => query.fetchNextPage()}
           >

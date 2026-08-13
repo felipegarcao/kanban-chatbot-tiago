@@ -1,5 +1,6 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Sidebar } from "@/presentation/ui/components/Sidebar";
 import type { UsuarioSessao } from "@/presentation/ui/features/auth/types";
@@ -19,11 +20,9 @@ export function AppShell({ usuario, children }: { usuario: UsuarioSessao; childr
             type="button"
             onClick={() => setMenuAberto(true)}
             aria-label="Abrir menu"
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md text-foreground hover:bg-border/40"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-foreground hover:bg-border/40"
           >
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-              <path d="M2.5 5h15M2.5 10h15M2.5 15h15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
+            <Menu size={20} aria-hidden="true" />
           </button>
           <span className="text-sm font-semibold text-foreground">Painel de Conversas</span>
         </div>

@@ -2,21 +2,24 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/presentation/ui/components/Button";
+import { FolderKanban, LogOut, MessagesSquare, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { SistemaSelector } from "@/presentation/ui/components/SistemaSelector";
+import { ThemeToggle } from "@/presentation/ui/components/ThemeToggle";
 import { useLogout } from "@/presentation/ui/features/auth/useLogout";
 import type { UsuarioSessao } from "@/presentation/ui/features/auth/types";
 
 interface ItemNav {
   href: string;
   rotulo: string;
+  Icone: LucideIcon;
   somenteAdmin?: boolean;
 }
 
 const ITENS_NAV: ItemNav[] = [
-  { href: "/app", rotulo: "Conversas" },
-  { href: "/admin", rotulo: "Projetos", somenteAdmin: true },
-  { href: "/admin/usuarios", rotulo: "Usuários", somenteAdmin: true },
+  { href: "/app", rotulo: "Conversas", Icone: MessagesSquare },
+  { href: "/admin", rotulo: "Projetos", Icone: FolderKanban, somenteAdmin: true },
+  { href: "/admin/usuarios", rotulo: "Usuários", Icone: Users, somenteAdmin: true },
 ];
 
 export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNavegar?: () => void }) {
@@ -25,7 +28,10 @@ export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNave
 
   return (
     <div className="flex h-full w-64 flex-col border-r border-border bg-surface">
-      <div className="px-4 py-4">
+      <div className="flex items-center gap-2 px-4 py-4">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-sm font-bold text-accent-foreground">
+          P
+        </span>
         <span className="text-sm font-semibold text-foreground">Painel de Conversas</span>
       </div>
 
@@ -41,10 +47,12 @@ export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNave
               key={item.href}
               href={item.href}
               onClick={onNavegar}
-              className={`flex min-h-[44px] items-center rounded-md px-3 text-sm font-medium transition-colors ${
+              aria-current={ativo ? "page" : undefined}
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-lg px-3 text-sm font-medium transition-colors ${
                 ativo ? "bg-accent/15 text-accent" : "text-muted hover:bg-border/40 hover:text-foreground"
               }`}
             >
+              <item.Icone size={17} aria-hidden="true" />
               {item.rotulo}
             </Link>
           );
@@ -53,14 +61,27 @@ export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNave
 
       <div className="flex-1" />
 
-      <div className="flex items-center gap-2 border-t border-border p-3">
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-foreground">{usuario.nome}</p>
-          <p className="truncate text-xs text-muted">{usuario.papel === "admin" ? "Admin" : "Operador"}</p>
+      <div className="flex flex-col gap-3 border-t border-border p-3">
+        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-border/60 text-xs font-semibold text-foreground">
+            {usuario.nome.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-foreground">{usuario.nome}</p>
+            <p className="truncate text-xs text-muted">{usuario.papel === "admin" ? "Admin" : "Operador"}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => logout.mutate()}
+            disabled={logout.isPending}
+            aria-label="Sair"
+            title="Sair"
+            className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-lg text-muted transition-colors hover:bg-border/40 hover:text-critical disabled:opacity-50"
+          >
+            <LogOut size={16} aria-hidden="true" />
+          </button>
         </div>
-        <Button variante="ghost" onClick={() => logout.mutate()} carregando={logout.isPending}>
-          Sair
-        </Button>
       </div>
     </div>
   );

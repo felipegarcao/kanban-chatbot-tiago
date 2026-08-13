@@ -10,7 +10,7 @@ const CLASSES_TOM: Record<Tom, string> = {
 
 export function Badge({ children, tom = "neutro" }: { children: ReactNode; tom?: Tom }) {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${CLASSES_TOM[tom]}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${CLASSES_TOM[tom]}`}>
       {children}
     </span>
   );

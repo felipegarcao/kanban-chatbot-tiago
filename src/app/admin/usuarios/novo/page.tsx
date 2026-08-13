@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { UserPlus } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/presentation/ui/components/Button";
 import { Field } from "@/presentation/ui/components/Field";
+import { FormCard } from "@/presentation/ui/components/FormCard";
+import { Select } from "@/presentation/ui/components/Select";
 import { useCriarUsuario } from "@/presentation/ui/features/admin/useUsuariosAdmin";
 import type { Papel } from "@/presentation/ui/features/admin/types";
 import { ErroHttp } from "@/presentation/ui/lib/httpClient";
@@ -29,14 +31,9 @@ export default function NovoUsuarioPage() {
     criar.error instanceof ErroHttp ? criar.error.message : criar.isError ? "Não foi possível criar o usuário." : null;
 
   return (
-    <div className="mx-auto flex max-w-md flex-col gap-4">
-      <Link href="/admin/usuarios" className="text-sm text-muted hover:text-foreground">
-        ← Usuários
-      </Link>
-      <h1 className="text-lg font-semibold text-foreground">Novo usuário</h1>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-        <Field label="Nome" required value={nome} onChange={(e) => setNome(e.target.value)} />
+    <FormCard titulo="Novo usuário" descricao="Crie um acesso para um admin ou operador." voltarHref="/admin/usuarios" voltarRotulo="Usuários">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Field label="Nome" required autoFocus value={nome} onChange={(e) => setNome(e.target.value)} />
         <Field label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
         <Field
           label="Senha"
@@ -46,26 +43,19 @@ export default function NovoUsuarioPage() {
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
         />
-        <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-medium text-foreground">Papel</span>
-          <select
-            value={papel}
-            onChange={(e) => setPapel(e.target.value as Papel)}
-            className="rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground"
-          >
-            <option value="operador">Operador</option>
-            <option value="admin">Admin</option>
-          </select>
-        </label>
+        <Select label="Papel" value={papel} onChange={(e) => setPapel(e.target.value as Papel)}>
+          <option value="operador">Operador</option>
+          <option value="admin">Admin</option>
+        </Select>
         {mensagemErro && (
           <p role="alert" className="text-sm text-critical">
             {mensagemErro}
           </p>
         )}
-        <Button type="submit" carregando={criar.isPending} className="self-start">
+        <Button type="submit" icone={UserPlus} carregando={criar.isPending} className="self-start">
           Criar usuário
         </Button>
       </form>
-    </div>
+    </FormCard>
   );
 }

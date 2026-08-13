@@ -13,4 +13,6 @@ export interface UsuarioRepository {
   listar(): Promise<Usuario[]>;
   criar(usuario: NovoUsuario): Promise<Usuario>;
   salvar(usuario: Usuario): Promise<void>;
+  deletar(id: number): Promise<void>;
+  contarAdminsAtivos(): Promise<number>;
 }

@@ -1,5 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { AlertTriangle, Clock, Phone } from "lucide-react";
 import { Badge } from "@/presentation/ui/components/Badge";
 import { formatarTelefone, tempoRelativo } from "@/presentation/ui/lib/formatters";
 import { MoverParaMenu } from "./MoverParaMenu";
@@ -46,17 +47,25 @@ export function ConversaCard({ conversa, onClick, onMover, movendo }: ConversaCa
       >
         <div className="flex items-start justify-between gap-2">
           <span className="text-sm font-medium text-foreground">{conversa.contatoNome ?? "Sem nome"}</span>
-          {conversa.prioridade === "critica" && <Badge tom="critico">Crítica</Badge>}
+          {conversa.prioridade === "critica" && (
+            <Badge tom="critico">
+              <AlertTriangle size={11} aria-hidden="true" /> Crítica
+            </Badge>
+          )}
         </div>
 
-        <span className="text-xs text-muted">{formatarTelefone(conversa.contatoTelefone)}</span>
+        <span className="flex items-center gap-1.5 text-xs text-muted">
+          <Phone size={12} aria-hidden="true" /> {formatarTelefone(conversa.contatoTelefone)}
+        </span>
 
         {conversa.ultimaMensagemTrecho && (
           <p className="line-clamp-2 text-sm text-foreground/80">{conversa.ultimaMensagemTrecho}</p>
         )}
 
         <div className="mt-1 flex items-center justify-between gap-2">
-          <span className="text-xs text-muted">{tempoRelativo(conversa.ultimaMensagemEm)}</span>
+          <span className="flex items-center gap-1 text-xs text-muted">
+            <Clock size={12} aria-hidden="true" /> {tempoRelativo(conversa.ultimaMensagemEm)}
+          </span>
           {conversa.estado && <Badge tom="neutro">{ROTULO_ESTADO[conversa.estado] ?? conversa.estado}</Badge>}
         </div>
       </button>

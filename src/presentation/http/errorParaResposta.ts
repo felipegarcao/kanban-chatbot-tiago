@@ -12,6 +12,9 @@ const STATUS_POR_CODIGO: Record<string, number> = {
   USUARIO_INATIVO: 403,
   EMAIL_JA_CADASTRADO: 409,
   CONFLITO_DE_CONCORRENCIA: 409,
+  PROJETO_POSSUI_CONVERSAS: 409,
+  NAO_PODE_EXCLUIR_PROPRIO_USUARIO: 409,
+  NAO_PODE_EXCLUIR_ULTIMO_ADMIN: 409,
 };
 
 /** Traduz erros de domínio para HTTP — a única camada que conhece esse mapeamento. */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { LogIn, Lock, Mail } from "lucide-react";
 import { Suspense, useState, type FormEvent } from "react";
 import { Button } from "@/presentation/ui/components/Button";
 import { Field } from "@/presentation/ui/components/Field";
@@ -45,15 +46,23 @@ function LoginForm() {
 
   return (
     <main className="flex min-h-screen flex-1 items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm rounded-lg border border-border bg-surface p-8 shadow-sm">
-        <h1 className="text-lg font-semibold text-foreground">Painel de Conversas</h1>
-        <p className="mt-1 text-sm text-muted">Entre com sua conta para continuar.</p>
+      <div className="w-full max-w-sm rounded-xl border border-border bg-surface p-8 shadow-sm">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-sm font-bold text-accent-foreground">
+            P
+          </span>
+          <div>
+            <h1 className="text-lg font-semibold text-foreground">Painel de Conversas</h1>
+            <p className="text-sm text-muted">Entre com sua conta para continuar.</p>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4" noValidate>
           <Field
             label="Email"
             type="email"
             name="email"
+            icone={Mail}
             autoComplete="username"
             required
             value={email}
@@ -63,6 +72,7 @@ function LoginForm() {
             label="Senha"
             type="password"
             name="senha"
+            icone={Lock}
             autoComplete="current-password"
             required
             value={senha}
@@ -75,7 +85,7 @@ function LoginForm() {
             </p>
           )}
 
-          <Button type="submit" carregando={login.isPending} className="mt-2 w-full">
+          <Button type="submit" icone={LogIn} carregando={login.isPending} className="mt-2 w-full">
             Entrar
           </Button>
         </form>

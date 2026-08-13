@@ -49,4 +49,15 @@ export class PgUsuarioRepository implements UsuarioRepository {
       [props.id, props.nome, props.papel, props.ativo],
     );
   }
+
+  async deletar(id: number): Promise<void> {
+    await this.db.query(`DELETE FROM felipe_system.usuarios WHERE id = $1`, [id]);
+  }
+
+  async contarAdminsAtivos(): Promise<number> {
+    const { rows } = await this.db.query<{ total: string }>(
+      `SELECT COUNT(*)::text AS total FROM felipe_system.usuarios WHERE papel = 'admin' AND ativo = TRUE`,
+    );
+    return Number(rows[0]!.total);
+  }
 }

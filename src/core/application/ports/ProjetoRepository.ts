@@ -11,4 +11,6 @@ export interface ProjetoRepository {
   listarPorIds(ids: readonly number[]): Promise<Projeto[]>;
   criar(projeto: NovoProjeto): Promise<Projeto>;
   salvar(projeto: Projeto): Promise<void>;
+  /** Lança ProjetoPossuiConversas se houver conversas referenciando o projeto (FK sem cascade, de propósito). */
+  deletar(id: number): Promise<void>;
 }

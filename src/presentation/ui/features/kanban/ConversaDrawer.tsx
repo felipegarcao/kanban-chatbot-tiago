@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, Bot, CheckCircle2, Clock3, CreditCard, Phone, Undo2, UserCheck, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/presentation/ui/components/Button";
 import { Skeleton } from "@/presentation/ui/components/Skeleton";
@@ -68,11 +69,18 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
                 <h2 className="text-base font-semibold text-foreground">
                   {data.conversa.contatoNome ?? "Sem nome"}
                 </h2>
-                <p className="text-sm text-muted">{formatarTelefone(data.conversa.contatoTelefone)}</p>
+                <p className="flex items-center gap-1.5 text-sm text-muted">
+                  <Phone size={13} aria-hidden="true" /> {formatarTelefone(data.conversa.contatoTelefone)}
+                </p>
               </div>
-              <Button variante="ghost" onClick={onFechar} aria-label="Fechar detalhe da conversa">
-                Fechar
-              </Button>
+              <button
+                type="button"
+                onClick={onFechar}
+                aria-label="Fechar detalhe da conversa"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-muted hover:bg-border/40 hover:text-foreground"
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
             </div>
 
             <div className="flex items-center gap-2 border-b border-border px-4 py-2">
@@ -81,8 +89,9 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
             </div>
 
             {silenciaBot(data.conversa.status) && (
-              <p role="note" className="border-b border-border bg-warning/10 px-4 py-2 text-xs text-warning">
-                O bot está pausado nesta conversa enquanto ela estiver neste status.
+              <p role="note" className="flex items-center gap-1.5 border-b border-border bg-warning/10 px-4 py-2 text-xs text-warning">
+                <AlertTriangle size={13} aria-hidden="true" /> O bot está pausado nesta conversa enquanto ela estiver
+                neste status.
               </p>
             )}
 
@@ -92,7 +101,7 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
 
             <div className="flex flex-col gap-2 border-t border-border p-4">
               {data.conversa.status === "aguardando_humano" && (
-                <Button carregando={assumir.isPending} onClick={() => assumir.mutate(conversaId)}>
+                <Button icone={UserCheck} carregando={assumir.isPending} onClick={() => assumir.mutate(conversaId)}>
                   Assumir conversa
                 </Button>
               )}
@@ -101,6 +110,7 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
                 <>
                   <Button
                     variante="secondary"
+                    icone={Clock3}
                     carregando={mover.isPending}
                     disabled={acaoEmAndamento}
                     onClick={() => mover.mutate({ conversaId, novoStatus: "aguardando_cliente" })}
@@ -109,18 +119,21 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
                   </Button>
                   <Button
                     variante="secondary"
+                    icone={CheckCircle2}
                     carregando={mover.isPending}
                     disabled={acaoEmAndamento}
                     onClick={() => mover.mutate({ conversaId, novoStatus: "resolvida" })}
                   >
                     Marcar como resolvida
                   </Button>
-                  <div className="rounded-md border border-warning/30 bg-warning/5 p-2">
-                    <p className="mb-1.5 text-xs text-warning">
-                      Devolver para o bot reativa as respostas automáticas no WhatsApp agora.
+                  <div className="rounded-lg border border-warning/30 bg-warning/5 p-2">
+                    <p className="mb-1.5 flex items-center gap-1.5 text-xs text-warning">
+                      <AlertTriangle size={13} aria-hidden="true" /> Devolver para o bot reativa as respostas
+                      automáticas no WhatsApp agora.
                     </p>
                     <Button
                       variante="danger"
+                      icone={Bot}
                       carregando={devolverParaBot.isPending}
                       disabled={acaoEmAndamento}
                       onClick={() => devolverParaBot.mutate(conversaId)}
@@ -135,6 +148,7 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
                 <>
                   <Button
                     variante="secondary"
+                    icone={Undo2}
                     carregando={mover.isPending}
                     disabled={acaoEmAndamento}
                     onClick={() => mover.mutate({ conversaId, novoStatus: "em_atendimento" })}
@@ -143,6 +157,7 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
                   </Button>
                   <Button
                     variante="secondary"
+                    icone={CheckCircle2}
                     carregando={mover.isPending}
                     disabled={acaoEmAndamento}
                     onClick={() => mover.mutate({ conversaId, novoStatus: "resolvida" })}
@@ -153,7 +168,9 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
               )}
 
               {data.conversa.status === "aguardando_financeiro" && (
-                <Button onClick={() => setModalPagamentoAberto(true)}>Confirmar pagamento</Button>
+                <Button icone={CreditCard} onClick={() => setModalPagamentoAberto(true)}>
+                  Confirmar pagamento
+                </Button>
               )}
 
               {(data.conversa.status === "ativa" || data.conversa.status === "resolvida") && (

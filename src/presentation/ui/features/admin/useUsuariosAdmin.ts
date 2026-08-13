@@ -39,6 +39,14 @@ export function useEditarUsuario() {
   });
 }
 
+export function useDeletarUsuario() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (usuarioId: number) => httpClient.delete(`/api/usuarios/${usuarioId}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarios-admin"] }),
+  });
+}
+
 export function useConcederAcesso() {
   const queryClient = useQueryClient();
   return useMutation({

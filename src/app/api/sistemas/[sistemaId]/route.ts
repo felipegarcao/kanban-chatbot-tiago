@@ -4,6 +4,25 @@ import { errorParaResposta } from "@/presentation/http/errorParaResposta";
 import { obterUsuarioDaRequisicao } from "@/presentation/http/obterUsuarioDaRequisicao";
 import { editarProjetoSchema } from "@/presentation/http/schemas/admin";
 
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ sistemaId: string }> },
+): Promise<NextResponse> {
+  const usuario = await obterUsuarioDaRequisicao(req);
+  if (!usuario) {
+    return NextResponse.json({ erro: "NAO_AUTENTICADO" }, { status: 401 });
+  }
+
+  const { sistemaId } = await params;
+
+  try {
+    await container().useCases.deletarProjeto.execute({ papel: usuario.papel, sistemaId: Number(sistemaId) });
+    return NextResponse.json({ ok: true });
+  } catch (erro) {
+    return errorParaResposta(erro);
+  }
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ sistemaId: string }> },

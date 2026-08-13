@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 import { Button } from "./Button";
@@ -55,42 +56,48 @@ export function DataList<T>({
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <div className="flex items-end gap-3">
         <div className="max-w-xs flex-1">
           <Field
             label="Buscar"
             type="search"
+            icone={Search}
             placeholder={buscarPlaceholder}
+            aria-label={buscarPlaceholder}
             value={busca}
             onChange={(e) => handleBusca(e.target.value)}
           />
         </div>
         <Link href={novoHref}>
-          <Button type="button">{novoRotulo}</Button>
+          <Button type="button" icone={Plus}>
+            {novoRotulo}
+          </Button>
         </Link>
       </div>
 
-      {filtrados.length === 0 && <EmptyState titulo={tituloVazio} descricao={busca ? "Nenhum resultado para a busca." : undefined} />}
+      {filtrados.length === 0 && (
+        <EmptyState titulo={tituloVazio} descricao={busca ? "Nenhum resultado para a busca." : undefined} />
+      )}
 
       {filtrados.length > 0 && (
         <>
-          <div className="hidden overflow-x-auto rounded-lg border border-border md:block">
+          <div className="hidden overflow-hidden rounded-xl border border-border shadow-sm md:block">
             <table className="w-full text-left text-sm">
               <thead className="bg-surface">
                 <tr>
                   {colunas.map((coluna) => (
-                    <th key={coluna.header} className="px-3 py-2 font-medium text-muted">
+                    <th key={coluna.header} className="px-4 py-2.5 text-xs font-semibold uppercase tracking-wide text-muted">
                       {coluna.header}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-border">
                 {pagina0.map((item) => (
-                  <tr key={getId(item)} className="border-t border-border bg-background">
+                  <tr key={getId(item)} className="bg-background transition-colors hover:bg-surface">
                     {colunas.map((coluna) => (
-                      <td key={coluna.header} className={`px-3 py-2.5 ${coluna.className ?? ""}`}>
+                      <td key={coluna.header} className={`px-4 py-3 ${coluna.className ?? ""}`}>
                         {coluna.render(item)}
                       </td>
                     ))}
@@ -106,6 +113,7 @@ export function DataList<T>({
             <div className="flex items-center justify-between gap-3">
               <Button
                 variante="secondary"
+                icone={ChevronLeft}
                 disabled={paginaAtual <= 1}
                 onClick={() => setPagina((p) => Math.max(1, p - 1))}
               >
@@ -118,6 +126,8 @@ export function DataList<T>({
                 variante="secondary"
                 disabled={paginaAtual >= totalPaginas}
                 onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+                className="flex-row-reverse"
+                icone={ChevronRight}
               >
                 Próxima
               </Button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useState } from "react";
+import { ArrowLeft, GripVertical, Save } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/presentation/ui/components/Button";
 import { Skeleton } from "@/presentation/ui/components/Skeleton";
@@ -15,18 +16,23 @@ export default function AdminColunasPage({ params }: { params: Promise<{ sistema
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4">
-      <Link href={`/admin/projetos/${sistemaId}/editar`} className="text-sm text-muted hover:text-foreground">
-        ← Voltar ao projeto
+      <Link
+        href={`/admin/projetos/${sistemaId}/editar`}
+        className="inline-flex w-fit items-center gap-1 text-sm text-muted hover:text-foreground"
+      >
+        <ArrowLeft size={15} aria-hidden="true" /> Voltar ao projeto
       </Link>
-      <h1 className="text-lg font-semibold text-foreground">Raias do quadro</h1>
-      <p className="text-sm text-muted">
-        A chave de cada raia é fixa (contrato com o banco). Só rótulo, cor, ordem e visibilidade são configuráveis.
-      </p>
+      <div>
+        <h1 className="text-lg font-semibold text-foreground">Raias do quadro</h1>
+        <p className="mt-0.5 text-sm text-muted">
+          A chave de cada raia é fixa (contrato com o banco). Só rótulo, cor, ordem e visibilidade são configuráveis.
+        </p>
+      </div>
 
       {colunas.isPending && (
         <div className="flex flex-col gap-2">
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-14 w-full" />
+          <Skeleton className="h-14 w-full" />
         </div>
       )}
 
@@ -34,9 +40,7 @@ export default function AdminColunasPage({ params }: { params: Promise<{ sistema
         <ErrorState mensagem="Não foi possível carregar as raias." aoTentarNovamente={() => colunas.refetch()} />
       )}
 
-      {colunas.isSuccess && (
-        <EditorDeColunas key={sistemaId} sistemaId={sistemaId} colunasIniciais={colunas.data} />
-      )}
+      {colunas.isSuccess && <EditorDeColunas key={sistemaId} sistemaId={sistemaId} colunasIniciais={colunas.data} />}
     </div>
   );
 }
@@ -50,45 +54,51 @@ function EditorDeColunas({ sistemaId, colunasIniciais }: { sistemaId: number; co
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      {rascunho
-        .slice()
-        .sort((a, b) => a.ordem - b.ordem)
-        .map((coluna) => (
-          <div key={coluna.id} className="flex items-center gap-2 rounded-lg border border-border bg-surface p-2.5">
-            <input
-              type="color"
-              value={coluna.cor}
-              onChange={(e) => atualizar(coluna.id, { cor: e.target.value })}
-              aria-label={`Cor da raia ${coluna.titulo}`}
-              className="h-8 w-8 shrink-0 rounded border border-border"
-            />
-            <input
-              value={coluna.titulo}
-              onChange={(e) => atualizar(coluna.id, { titulo: e.target.value })}
-              aria-label={`Título da raia ${coluna.chave}`}
-              className="flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground"
-            />
-            <input
-              type="number"
-              value={coluna.ordem}
-              onChange={(e) => atualizar(coluna.id, { ordem: Number(e.target.value) })}
-              aria-label={`Ordem da raia ${coluna.titulo}`}
-              className="w-16 rounded-md border border-border bg-background px-2 py-1.5 text-sm text-foreground"
-            />
-            <label className="flex items-center gap-1.5 text-xs text-muted">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-2 shadow-sm">
+        {rascunho
+          .slice()
+          .sort((a, b) => a.ordem - b.ordem)
+          .map((coluna) => (
+            <div key={coluna.id} className="flex flex-wrap items-center gap-2 rounded-lg p-1.5">
+              <GripVertical size={15} className="shrink-0 text-muted" aria-hidden="true" />
               <input
-                type="checkbox"
-                checked={coluna.visivel}
-                onChange={(e) => atualizar(coluna.id, { visivel: e.target.checked })}
+                type="color"
+                value={coluna.cor}
+                onChange={(e) => atualizar(coluna.id, { cor: e.target.value })}
+                aria-label={`Cor da raia ${coluna.titulo}`}
+                className="h-8 w-8 shrink-0 cursor-pointer rounded-md border border-border"
               />
-              Visível
-            </label>
-            <code className="text-xs text-muted">{coluna.chave}</code>
-          </div>
-        ))}
+              <input
+                value={coluna.titulo}
+                onChange={(e) => atualizar(coluna.id, { titulo: e.target.value })}
+                aria-label={`Título da raia ${coluna.chave}`}
+                className="min-w-0 flex-1 rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground
+                  focus-visible:outline-2 focus-visible:outline-ring"
+              />
+              <input
+                type="number"
+                value={coluna.ordem}
+                onChange={(e) => atualizar(coluna.id, { ordem: Number(e.target.value) })}
+                aria-label={`Ordem da raia ${coluna.titulo}`}
+                className="w-16 rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground
+                  focus-visible:outline-2 focus-visible:outline-ring"
+              />
+              <label className="flex items-center gap-1.5 text-xs text-muted">
+                <input
+                  type="checkbox"
+                  checked={coluna.visivel}
+                  onChange={(e) => atualizar(coluna.id, { visivel: e.target.checked })}
+                  className="h-4 w-4 accent-accent"
+                />
+                Visível
+              </label>
+              <code className="rounded bg-border/40 px-1.5 py-0.5 text-xs text-muted">{coluna.chave}</code>
+            </div>
+          ))}
+      </div>
 
-      <Button onClick={() => configurar.mutate(rascunho)} carregando={configurar.isPending} className="self-start">
+      <Button onClick={() => configurar.mutate(rascunho)} carregando={configurar.isPending} icone={Save} className="self-start">
         Salvar raias
       </Button>
     </div>

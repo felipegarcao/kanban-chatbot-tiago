@@ -1,5 +1,6 @@
 "use client";
 
+import { CreditCard } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/presentation/ui/components/Button";
 import { Field } from "@/presentation/ui/components/Field";
@@ -78,7 +79,7 @@ export function ConfirmarPagamentoModal({
         <Button variante="secondary" onClick={onFechar} disabled={confirmar.isPending}>
           Cancelar
         </Button>
-        <Button onClick={handleConfirmar} carregando={confirmar.isPending}>
+        <Button icone={CreditCard} onClick={handleConfirmar} carregando={confirmar.isPending}>
           Confirmar pagamento
         </Button>
       </div>

@@ -86,3 +86,27 @@ export class ConflitoDeConcorrencia extends DomainError {
     super(mensagem);
   }
 }
+
+export class ProjetoPossuiConversas extends DomainError {
+  readonly code = "PROJETO_POSSUI_CONVERSAS";
+
+  constructor() {
+    super("Este projeto tem conversas associadas e não pode ser excluído. Desative-o em vez disso.");
+  }
+}
+
+export class NaoPodeExcluirProprioUsuario extends DomainError {
+  readonly code = "NAO_PODE_EXCLUIR_PROPRIO_USUARIO";
+
+  constructor() {
+    super("Você não pode excluir sua própria conta.");
+  }
+}
+
+export class NaoPodeExcluirUltimoAdmin extends DomainError {
+  readonly code = "NAO_PODE_EXCLUIR_ULTIMO_ADMIN";
+
+  constructor() {
+    super("Não é possível excluir o último administrador ativo.");
+  }
+}

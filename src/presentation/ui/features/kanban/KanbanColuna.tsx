@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import { ChevronDown } from "lucide-react";
 import { Button } from "@/presentation/ui/components/Button";
 import { CardSkeleton } from "@/presentation/ui/components/Skeleton";
 import { EmptyState } from "@/presentation/ui/components/EmptyState";
@@ -24,9 +25,9 @@ export function KanbanColuna({ sistemaId, coluna, busca, total, onSelecionarConv
   const { setNodeRef, isOver } = useDroppable({ id: coluna.chave });
 
   return (
-    <div className="flex h-full w-80 shrink-0 flex-col rounded-lg border border-border bg-background">
-      <div className="flex items-center gap-2 rounded-t-lg border-b border-border bg-surface px-3 py-2.5">
-        <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: coluna.cor }} aria-hidden="true" />
+    <div className="flex h-full w-80 shrink-0 flex-col rounded-xl border border-border bg-background shadow-sm">
+      <div className="flex items-center gap-2 rounded-t-xl border-b border-border bg-surface px-3 py-2.5">
+        <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: coluna.cor }} aria-hidden="true" />
         <h2 className="flex-1 truncate text-sm font-semibold text-foreground">{coluna.titulo}</h2>
         <span className="rounded-full bg-border/60 px-2 py-0.5 text-xs font-medium text-muted">
           {total ?? "…"}
@@ -62,6 +63,7 @@ export function KanbanColuna({ sistemaId, coluna, busca, total, onSelecionarConv
           {query.hasNextPage && (
             <Button
               variante="secondary"
+              icone={ChevronDown}
               className="mt-1 w-full"
               carregando={query.isFetchingNextPage}
               onClick={() => query.fetchNextPage()}

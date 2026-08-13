@@ -1,6 +1,7 @@
 "use client";
 
 import { DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
+import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Field } from "@/presentation/ui/components/Field";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
@@ -53,6 +54,7 @@ export function KanbanBoard({ sistemaId }: { sistemaId: number }) {
             <Field
               label="Buscar"
               type="search"
+              icone={Search}
               placeholder="Nome ou telefone"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
