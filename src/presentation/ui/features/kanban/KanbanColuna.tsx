@@ -4,6 +4,7 @@ import { Button } from "@/presentation/ui/components/Button";
 import { CardSkeleton } from "@/presentation/ui/components/Skeleton";
 import { EmptyState } from "@/presentation/ui/components/EmptyState";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
+import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
 import { ConversaCard } from "./ConversaCard";
 import { useConversasDaColuna } from "./useConversasDaColuna";
 import { useMoverConversa } from "./useMoverConversa";
@@ -42,7 +43,7 @@ export function KanbanColuna({ sistemaId, coluna, busca, total, onSelecionarConv
           {query.isPending &&
             Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)}
 
-          {query.isError && (
+          {query.isError && !ehErroDePermissao(query.error) && (
             <ErrorState mensagem="Não foi possível carregar as conversas." aoTentarNovamente={() => query.refetch()} />
           )}
 

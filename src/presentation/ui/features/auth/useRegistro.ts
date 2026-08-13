@@ -14,6 +14,9 @@ export function useRegistro() {
   return useMutation({
     mutationFn: (input: RegistroInput) => httpClient.post<UsuarioSessao>("/api/auth/registrar", input),
     onSuccess: (usuario) => {
+      // Mesmo raciocínio do login: zera o cache antes de guardar a identidade nova, senão
+      // dados de uma sessão anterior no mesmo navegador podem vazar por um instante.
+      queryClient.clear();
       queryClient.setQueryData(["usuario-logado"], usuario);
     },
   });

@@ -9,6 +9,15 @@ export class ErroHttp extends Error {
   }
 }
 
+/**
+ * 401/403 não são "algo quebrou" — são "você não pode ver isso" (sessão trocou, acesso foi
+ * revogado, ainda não foi vinculado a um projeto). Tela de erro alarmante é a reação errada;
+ * o certo é esconder o conteúdo e seguir em frente, não estourar um alerta pro usuário final.
+ */
+export function ehErroDePermissao(erro: unknown): boolean {
+  return erro instanceof ErroHttp && (erro.status === 401 || erro.status === 403);
+}
+
 async function requisitar<T>(url: string, init?: RequestInit): Promise<T> {
   const resposta = await fetch(url, {
     ...init,

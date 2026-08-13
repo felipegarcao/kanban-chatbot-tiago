@@ -9,7 +9,7 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => httpClient.post("/api/auth/logout"),
     onSuccess: () => {
-      queryClient.setQueryData(["usuario-logado"], null);
+      queryClient.clear();
       router.push("/login");
     },
   });

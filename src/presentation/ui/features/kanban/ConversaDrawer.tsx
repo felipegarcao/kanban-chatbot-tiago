@@ -6,6 +6,7 @@ import { Button } from "@/presentation/ui/components/Button";
 import { Skeleton } from "@/presentation/ui/components/Skeleton";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
 import { formatarTelefone, tempoRelativo } from "@/presentation/ui/lib/formatters";
+import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
 import { silenciaBot } from "@/core/domain/regrasDoWorkflow";
 import type { StatusConversa } from "@/core/domain/Conversa";
 import { ConfirmarPagamentoModal } from "./ConfirmarPagamentoModal";
@@ -25,7 +26,7 @@ const ROTULO_STATUS: Record<StatusConversa, string> = {
 };
 
 export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; onFechar: () => void }) {
-  const { data, isPending, isError, refetch } = useDetalheConversa(conversaId);
+  const { data, isPending, isError, error, refetch } = useDetalheConversa(conversaId);
   const assumir = useAssumirConversa();
   const devolverParaBot = useDevolverParaBot();
   const mover = useMoverParaGenerico();
@@ -58,7 +59,16 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
           </div>
         )}
 
-        {isError && (
+        {isError && ehErroDePermissao(error) && (
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 p-4 text-center">
+            <p className="text-sm text-muted">Esta conversa não está disponível para você.</p>
+            <Button variante="secondary" onClick={onFechar}>
+              Fechar
+            </Button>
+          </div>
+        )}
+
+        {isError && !ehErroDePermissao(error) && (
           <div className="p-4">
             <ErrorState mensagem="Não foi possível carregar a conversa." aoTentarNovamente={() => refetch()} />
           </div>

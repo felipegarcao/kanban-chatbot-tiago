@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Field } from "@/presentation/ui/components/Field";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
 import { Skeleton } from "@/presentation/ui/components/Skeleton";
+import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
 import { ConversaDrawer } from "./ConversaDrawer";
 import { KanbanColuna } from "./KanbanColuna";
 import { useColunas } from "./useColunas";
@@ -76,7 +77,7 @@ export function KanbanBoard({ sistemaId }: { sistemaId: number }) {
           </div>
         )}
 
-        {colunas.isError && (
+        {colunas.isError && !ehErroDePermissao(colunas.error) && (
           <ErrorState mensagem="Não foi possível carregar as colunas do quadro." aoTentarNovamente={() => colunas.refetch()} />
         )}
 

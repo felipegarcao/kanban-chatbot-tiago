@@ -8,6 +8,7 @@ import { PullToRefresh } from "@/presentation/ui/components/PullToRefresh";
 import { CardSkeleton } from "@/presentation/ui/components/Skeleton";
 import { EmptyState } from "@/presentation/ui/components/EmptyState";
 import { ErrorState } from "@/presentation/ui/components/ErrorState";
+import { ehErroDePermissao } from "@/presentation/ui/lib/httpClient";
 import type { StatusConversa } from "@/core/domain/Conversa";
 import { ConversaDrawer } from "./ConversaDrawer";
 import { MobileConversaCard } from "./MobileConversaCard";
@@ -94,7 +95,7 @@ function ListaDaColuna({
       <div className="flex flex-col gap-2 p-3">
         {query.isPending && Array.from({ length: 3 }).map((_, i) => <CardSkeleton key={i} />)}
 
-        {query.isError && (
+        {query.isError && !ehErroDePermissao(query.error) && (
           <ErrorState mensagem="Não foi possível carregar as conversas." aoTentarNovamente={() => query.refetch()} />
         )}
 
