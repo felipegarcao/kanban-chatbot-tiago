@@ -4,7 +4,9 @@ services:
     container_name: kanban-chatbot
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      # só 127.0.0.1 — o Nginx (deploy/nginx/) é a única porta de entrada pública, direto
+      # em 0.0.0.0:3000 pularia TLS e os headers X-Forwarded-* que o rate limiter depende
+      - "127.0.0.1:3000:3000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       SESSION_SECRET: ${SESSION_SECRET}
