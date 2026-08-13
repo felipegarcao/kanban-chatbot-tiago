@@ -30,9 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (.env.example is a template, no secrets — kept tracked)
+# env files (.env.example / .env.docker.example are templates, no secrets — kept tracked)
 .env*
 !.env.example
+!.env.docker.example
 
 # vercel
 .vercel

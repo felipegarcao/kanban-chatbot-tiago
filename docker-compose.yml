@@ -1,0 +1,21 @@
+services:
+  app:
+    build: .
+    container_name: kanban-chatbot
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      SESSION_SECRET: ${SESSION_SECRET}
+      N8N_WEBHOOK_FINALIZAR_ATENDIMENTO_URL: ${N8N_WEBHOOK_FINALIZAR_ATENDIMENTO_URL}
+      NODE_ENV: production
+    # Mesma rede docker do container do Postgres (evolution_postgres) — assim o app resolve
+    # o banco pelo nome do container, sem IP fixo (que muda a cada restart) e sem túnel SSH.
+    # `external: true` porque essa rede já existe, criada pela stack do evolution/n8n.
+    networks:
+      - evolution_evolution-net
+
+networks:
+  evolution_evolution-net:
+    external: true
