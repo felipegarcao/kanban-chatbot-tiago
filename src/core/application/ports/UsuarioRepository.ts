@@ -12,4 +12,5 @@ export interface UsuarioRepository {
   buscarPorEmail(email: string): Promise<Usuario | null>;
   listar(): Promise<Usuario[]>;
   criar(usuario: NovoUsuario): Promise<Usuario>;
+  salvar(usuario: Usuario): Promise<void>;
 }

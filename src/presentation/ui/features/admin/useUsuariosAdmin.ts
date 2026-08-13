@@ -24,6 +24,21 @@ export function useCriarUsuario() {
   });
 }
 
+export interface EditarUsuarioInput {
+  usuarioId: number;
+  nome?: string;
+  papel?: Papel;
+  ativo?: boolean;
+}
+
+export function useEditarUsuario() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ usuarioId, ...body }: EditarUsuarioInput) => httpClient.patch(`/api/usuarios/${usuarioId}`, body),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["usuarios-admin"] }),
+  });
+}
+
 export function useConcederAcesso() {
   const queryClient = useQueryClient();
   return useMutation({

@@ -15,8 +15,8 @@ export default function AdminColunasPage({ params }: { params: Promise<{ sistema
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4">
-      <Link href="/admin" className="text-sm text-muted hover:text-foreground">
-        ← Projetos
+      <Link href={`/admin/projetos/${sistemaId}/editar`} className="text-sm text-muted hover:text-foreground">
+        ← Voltar ao projeto
       </Link>
       <h1 className="text-lg font-semibold text-foreground">Raias do quadro</h1>
       <p className="text-sm text-muted">

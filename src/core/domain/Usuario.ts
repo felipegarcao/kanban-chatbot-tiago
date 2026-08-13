@@ -53,6 +53,22 @@ export class Usuario {
     }
   }
 
+  renomear(nome: string): void {
+    this.props.nome = nome;
+  }
+
+  redefinirPapel(papel: Papel): void {
+    this.props.papel = papel;
+  }
+
+  ativar(): void {
+    this.props.ativo = true;
+  }
+
+  desativar(): void {
+    this.props.ativo = false;
+  }
+
   toProps(): Readonly<UsuarioProps> {
     return { ...this.props };
   }

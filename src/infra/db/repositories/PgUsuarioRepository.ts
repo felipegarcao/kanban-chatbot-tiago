@@ -41,4 +41,12 @@ export class PgUsuarioRepository implements UsuarioRepository {
     );
     return paraDominio(rows[0]!);
   }
+
+  async salvar(usuario: Usuario): Promise<void> {
+    const props = usuario.toProps();
+    await this.db.query(
+      `UPDATE felipe_system.usuarios SET nome = $2, papel = $3, ativo = $4 WHERE id = $1`,
+      [props.id, props.nome, props.papel, props.ativo],
+    );
+  }
 }

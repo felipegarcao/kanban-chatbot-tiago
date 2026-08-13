@@ -19,6 +19,12 @@ export const criarUsuarioSchema = z.object({
   papel: z.enum(["admin", "operador"]),
 });
 
+export const editarUsuarioSchema = z.object({
+  nome: z.string().trim().min(1).optional(),
+  papel: z.enum(["admin", "operador"]).optional(),
+  ativo: z.boolean().optional(),
+});
+
 export const concederAcessoSchema = z.object({
   sistemaId: z.number().int().positive(),
 });

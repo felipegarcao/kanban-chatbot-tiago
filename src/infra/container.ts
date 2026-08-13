@@ -30,6 +30,7 @@ import { ConcederAcessoAoProjeto } from "@/core/application/use-cases/ConcederAc
 import { RevogarAcessoAoProjeto } from "@/core/application/use-cases/RevogarAcessoAoProjeto";
 import { ListarUsuarios } from "@/core/application/use-cases/ListarUsuarios";
 import { CriarUsuario } from "@/core/application/use-cases/CriarUsuario";
+import { EditarUsuario } from "@/core/application/use-cases/EditarUsuario";
 import { ConfigurarColunasDoProjeto } from "@/core/application/use-cases/ConfigurarColunasDoProjeto";
 
 /**
@@ -73,6 +74,7 @@ function montarContainer() {
       revogarAcessoAoProjeto: new RevogarAcessoAoProjeto(usuarioSistemas),
       listarUsuarios: new ListarUsuarios(usuarios, usuarioSistemas),
       criarUsuario: new CriarUsuario(usuarios, hasher),
+      editarUsuario: new EditarUsuario(usuarios),
       configurarColunasDoProjeto: new ConfigurarColunasDoProjeto(colunas),
     },
   };

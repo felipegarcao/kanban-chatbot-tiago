@@ -2,11 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { AppHeader } from "@/presentation/ui/components/AppHeader";
+import { AppShell } from "@/presentation/ui/components/AppShell";
 import { useUsuarioLogado } from "@/presentation/ui/features/auth/useUsuarioLogado";
-import { SistemaSelecionadoProvider } from "@/presentation/ui/features/sistemas/SistemaSelecionadoContext";
 
-export default function AppShellLayout({ children }: { children: React.ReactNode }) {
+export default function AppRouteLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { data: usuario, isLoading, isError } = useUsuarioLogado();
 
@@ -20,12 +19,5 @@ export default function AppShellLayout({ children }: { children: React.ReactNode
     return <div className="flex min-h-screen items-center justify-center bg-background" />;
   }
 
-  return (
-    <SistemaSelecionadoProvider>
-      <div className="flex h-screen flex-col bg-background">
-        <AppHeader usuario={usuario} />
-        <main className="min-h-0 flex-1">{children}</main>
-      </div>
-    </SistemaSelecionadoProvider>
-  );
+  return <AppShell usuario={usuario}>{children}</AppShell>;
 }
