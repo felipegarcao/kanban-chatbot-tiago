@@ -19,6 +19,8 @@ const ROTULO_STATUS: Record<StatusConversa, string> = {
   aguardando_financeiro: "Aguardando financeiro",
   em_atendimento: "Em atendimento",
   aguardando_cliente: "Aguardando cliente",
+  pagamento_aprovado: "Pagamento aprovado",
+  aguardando_forms: "Aguardando formulário",
   resolvida: "Resolvida",
 };
 
@@ -171,6 +173,20 @@ export function ConversaDrawer({ conversaId, onFechar }: { conversaId: number; o
                 <Button icone={CreditCard} onClick={() => setModalPagamentoAberto(true)}>
                   Confirmar pagamento
                 </Button>
+              )}
+
+              {data.conversa.status === "pagamento_aprovado" && (
+                <p className="text-sm text-muted">
+                  Pagamento aprovado. O n8n já foi acionado e vai enviar o formulário ao cliente — nenhuma ação do
+                  operador aqui.
+                </p>
+              )}
+
+              {data.conversa.status === "aguardando_forms" && (
+                <p className="text-sm text-muted">
+                  Aguardando o cliente preencher e confirmar o formulário. O n8n finaliza a conversa automaticamente
+                  quando isso acontecer.
+                </p>
               )}
 
               {(data.conversa.status === "ativa" || data.conversa.status === "resolvida") && (

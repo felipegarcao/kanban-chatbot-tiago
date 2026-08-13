@@ -10,6 +10,7 @@ import { PgUnitOfWork } from "@/infra/db/repositories/PgUnitOfWork";
 import { ArgonHasher } from "@/infra/auth/ArgonHasher";
 import { JoseSessionService } from "@/infra/auth/JoseSessionService";
 import { SystemClock } from "@/infra/SystemClock";
+import { N8nWebhookFinalizarAtendimento } from "@/infra/webhooks/N8nWebhookFinalizarAtendimento";
 import { env } from "@/infra/config/env";
 
 import { AutenticarUsuario } from "@/core/application/use-cases/AutenticarUsuario";
@@ -52,6 +53,7 @@ function montarContainer() {
   const hasher = new ArgonHasher();
   const sessoes = new JoseSessionService(env.SESSION_SECRET);
   const clock = new SystemClock();
+  const webhookFinalizarAtendimento = new N8nWebhookFinalizarAtendimento(env.N8N_WEBHOOK_FINALIZAR_ATENDIMENTO_URL);
 
   return {
     sessoes,
@@ -66,7 +68,7 @@ function montarContainer() {
       moverConversaDeStatus: new MoverConversaDeStatus(unitOfWork, clock),
       assumirConversa: new AssumirConversa(unitOfWork, clock),
       devolverConversaParaBot: new DevolverConversaParaBot(unitOfWork),
-      confirmarPagamento: new ConfirmarPagamento(unitOfWork, clock),
+      confirmarPagamento: new ConfirmarPagamento(unitOfWork, clock, webhookFinalizarAtendimento, eventos),
 
       listarProjetos: new ListarProjetos(projetos, usuarioSistemas),
       criarProjeto: new CriarProjeto(projetos, colunas, usuarioSistemas),

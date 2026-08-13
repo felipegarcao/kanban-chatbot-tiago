@@ -5,6 +5,9 @@ const envSchema = z.object({
   SESSION_SECRET: z
     .string()
     .min(32, "SESSION_SECRET precisa ter pelo menos 32 caracteres"),
+  N8N_WEBHOOK_FINALIZAR_ATENDIMENTO_URL: z
+    .string()
+    .url("N8N_WEBHOOK_FINALIZAR_ATENDIMENTO_URL precisa ser uma URL válida"),
   NODE_ENV: z
     .enum(["development", "test", "production"])
     .default("development"),

@@ -6,6 +6,8 @@ export type StatusConversa =
   | "aguardando_financeiro"
   | "em_atendimento"
   | "aguardando_cliente"
+  | "pagamento_aprovado"
+  | "aguardando_forms"
   | "resolvida";
 
 export type EstadoConversa =
@@ -19,10 +21,15 @@ export type EstadoConversa =
 
 export type PrioridadeConversa = "normal" | "critica";
 
-/** Estados que o painel escreve. `ativa` e `aguardando_financeiro` são exclusivos do n8n. */
+/**
+ * Estados que o painel escreve. `ativa`, `aguardando_financeiro` e `aguardando_forms` são
+ * exclusivos do n8n — `aguardando_forms` é escrito pelo n8n depois do webhook
+ * finalizar-atendimento, enquanto espera o cliente preencher e confirmar o formulário.
+ */
 export const STATUS_ESCRITOS_PELO_PAINEL: readonly StatusConversa[] = [
   "em_atendimento",
   "aguardando_cliente",
+  "pagamento_aprovado",
   "resolvida",
 ];
 
@@ -30,8 +37,10 @@ export const STATUS_ESCRITOS_PELO_PAINEL: readonly StatusConversa[] = [
  * Alvos alcançáveis pelo drag-and-drop genérico do kanban (MoverConversaDeStatus).
  * `ativa` fica de fora de propósito: só `devolverParaBot()` pode escrevê-lo — é uma
  * exceção deliberada à regra "painel nunca escreve ativa", tratada como ação explícita
- * fora do mecanismo de arrastar-e-soltar. `aguardando_financeiro` nunca é alvo do
- * painel; `resolvida` vindo de `aguardando_financeiro` só passa por confirmarPagamento.
+ * fora do mecanismo de arrastar-e-soltar. `aguardando_financeiro` nunca é alvo do painel;
+ * `pagamento_aprovado` só é alcançado via confirmarPagamento (ação explícita, não drag) —
+ * a partir daí quem toca a conversa é o n8n (webhook finalizar-atendimento manda o
+ * formulário, grava `aguardando_forms` e, quando o cliente confirmar, grava `resolvida`).
  */
 const ALVOS_MOVIMENTO_GENERICO: ReadonlySet<StatusConversa> = new Set([
   "em_atendimento",
@@ -45,6 +54,8 @@ const TRANSICOES_GENERICAS: Readonly<Record<StatusConversa, ReadonlySet<StatusCo
   aguardando_financeiro: new Set(),
   em_atendimento: new Set(["aguardando_cliente", "resolvida"]),
   aguardando_cliente: new Set(["em_atendimento", "resolvida"]),
+  pagamento_aprovado: new Set(),
+  aguardando_forms: new Set(),
   resolvida: new Set(),
 };
 
@@ -178,12 +189,17 @@ export class Conversa {
   }
 
   /**
-   * aguardando_financeiro -> resolvida. Idempotente por natureza: se o status já não for
-   * `aguardando_financeiro` (ex.: dupla confirmação), lança TransicaoDeStatusInvalida em
-   * vez de gerar um segundo evento — cabe ao caso de uso tratar isso como "já confirmado".
+   * aguardando_financeiro -> pagamento_aprovado. Idempotente por natureza: se o status já
+   * não for `aguardando_financeiro` (ex.: dupla confirmação), lança TransicaoDeStatusInvalida
+   * em vez de gerar um segundo evento — cabe ao caso de uso tratar isso como "já confirmado".
+   *
+   * Não vai direto para `resolvida`: a partir daqui o caso de uso aciona o webhook
+   * `finalizar-atendimento` do n8n, que manda o formulário ao cliente (status vira
+   * `aguardando_forms`, escrito pelo n8n) e só quando o cliente confirmar é que o próprio
+   * n8n grava `resolvida` diretamente — o painel não escreve `resolvida` nesse fluxo.
    */
   confirmarPagamento(usuarioId: number, agora: Date, opts?: { valor?: number; observacao?: string }): void {
-    this.aplicarTransicao("resolvida", ["aguardando_financeiro"], {
+    this.aplicarTransicao("pagamento_aprovado", ["aguardando_financeiro"], {
       tipo: "pagamento_confirmado",
       detalhes: {
         usuario_id: usuarioId,

@@ -13,14 +13,16 @@ export interface CriarProjetoInput {
   descricao: string | null;
 }
 
-/** Mesmas 6 raias e ordem da migration 3 (seed para os projetos que já existiam). */
+/** Mesmas raias e ordem das migrations 3 e 5 (seed para os projetos que já existiam). */
 export const COLUNAS_PADRAO: ReadonlyArray<ConfiguracaoColuna> = [
   { chave: "ativa" as StatusConversa, titulo: "Ativa", cor: "#6366f1", ordem: 0, visivel: true },
   { chave: "aguardando_humano" as StatusConversa, titulo: "Aguardando humano", cor: "#f59e0b", ordem: 1, visivel: true },
   { chave: "em_atendimento" as StatusConversa, titulo: "Em atendimento", cor: "#0ea5e9", ordem: 2, visivel: true },
   { chave: "aguardando_cliente" as StatusConversa, titulo: "Aguardando cliente", cor: "#a855f7", ordem: 3, visivel: true },
   { chave: "aguardando_financeiro" as StatusConversa, titulo: "Aguardando financeiro", cor: "#22c55e", ordem: 4, visivel: true },
-  { chave: "resolvida" as StatusConversa, titulo: "Resolvida", cor: "#64748b", ordem: 5, visivel: true },
+  { chave: "pagamento_aprovado" as StatusConversa, titulo: "Pagamento aprovado", cor: "#0891b2", ordem: 5, visivel: true },
+  { chave: "aguardando_forms" as StatusConversa, titulo: "Aguardando formulário", cor: "#7c3aed", ordem: 6, visivel: true },
+  { chave: "resolvida" as StatusConversa, titulo: "Resolvida", cor: "#64748b", ordem: 7, visivel: true },
 ];
 
 export class CriarProjeto {

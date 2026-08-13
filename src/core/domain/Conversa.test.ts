@@ -34,13 +34,18 @@ describe("Conversa - assumir", () => {
     ]);
   });
 
-  it.each<StatusConversa>(["ativa", "aguardando_financeiro", "em_atendimento", "aguardando_cliente", "resolvida"])(
-    "rejeita assumir a partir de %s",
-    (status) => {
-      const conversa = criarConversa(status);
-      expect(() => conversa.assumir(USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
-    },
-  );
+  it.each<StatusConversa>([
+    "ativa",
+    "aguardando_financeiro",
+    "em_atendimento",
+    "aguardando_cliente",
+    "pagamento_aprovado",
+    "aguardando_forms",
+    "resolvida",
+  ])("rejeita assumir a partir de %s", (status) => {
+    const conversa = criarConversa(status);
+    expect(() => conversa.assumir(USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
+  });
 });
 
 describe("Conversa - devolverParaBot", () => {
@@ -53,13 +58,18 @@ describe("Conversa - devolverParaBot", () => {
     ]);
   });
 
-  it.each<StatusConversa>(["ativa", "aguardando_humano", "aguardando_financeiro", "aguardando_cliente", "resolvida"])(
-    "rejeita devolverParaBot a partir de %s",
-    (status) => {
-      const conversa = criarConversa(status);
-      expect(() => conversa.devolverParaBot(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
-    },
-  );
+  it.each<StatusConversa>([
+    "ativa",
+    "aguardando_humano",
+    "aguardando_financeiro",
+    "aguardando_cliente",
+    "pagamento_aprovado",
+    "aguardando_forms",
+    "resolvida",
+  ])("rejeita devolverParaBot a partir de %s", (status) => {
+    const conversa = criarConversa(status);
+    expect(() => conversa.devolverParaBot(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
+  });
 });
 
 describe("Conversa - aguardarCliente", () => {
@@ -69,13 +79,18 @@ describe("Conversa - aguardarCliente", () => {
     expect(conversa.status).toBe("aguardando_cliente");
   });
 
-  it.each<StatusConversa>(["ativa", "aguardando_humano", "aguardando_financeiro", "aguardando_cliente", "resolvida"])(
-    "rejeita aguardarCliente a partir de %s",
-    (status) => {
-      const conversa = criarConversa(status);
-      expect(() => conversa.aguardarCliente(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
-    },
-  );
+  it.each<StatusConversa>([
+    "ativa",
+    "aguardando_humano",
+    "aguardando_financeiro",
+    "aguardando_cliente",
+    "pagamento_aprovado",
+    "aguardando_forms",
+    "resolvida",
+  ])("rejeita aguardarCliente a partir de %s", (status) => {
+    const conversa = criarConversa(status);
+    expect(() => conversa.aguardarCliente(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
+  });
 });
 
 describe("Conversa - resolver", () => {
@@ -85,20 +100,24 @@ describe("Conversa - resolver", () => {
     expect(conversa.status).toBe("resolvida");
   });
 
-  it.each<StatusConversa>(["ativa", "aguardando_humano", "aguardando_financeiro", "resolvida"])(
-    "rejeita resolver a partir de %s",
-    (status) => {
-      const conversa = criarConversa(status);
-      expect(() => conversa.resolver(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
-    },
-  );
+  it.each<StatusConversa>([
+    "ativa",
+    "aguardando_humano",
+    "aguardando_financeiro",
+    "pagamento_aprovado",
+    "aguardando_forms",
+    "resolvida",
+  ])("rejeita resolver a partir de %s", (status) => {
+    const conversa = criarConversa(status);
+    expect(() => conversa.resolver(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
+  });
 });
 
 describe("Conversa - confirmarPagamento", () => {
-  it("move aguardando_financeiro -> resolvida e registra evento pagamento_confirmado", () => {
+  it("move aguardando_financeiro -> pagamento_aprovado e registra evento pagamento_confirmado", () => {
     const conversa = criarConversa("aguardando_financeiro", { estado: "finalizado" });
     conversa.confirmarPagamento(USUARIO_ID, AGORA, { valor: 150.5, observacao: "pix" });
-    expect(conversa.status).toBe("resolvida");
+    expect(conversa.status).toBe("pagamento_aprovado");
     expect(conversa.extrairEventosPendentes()).toEqual([
       {
         tipo: "pagamento_confirmado",
@@ -113,13 +132,40 @@ describe("Conversa - confirmarPagamento", () => {
     expect(() => conversa.confirmarPagamento(USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });
 
-  it.each<StatusConversa>(["ativa", "aguardando_humano", "em_atendimento", "aguardando_cliente", "resolvida"])(
-    "rejeita confirmarPagamento a partir de %s",
-    (status) => {
-      const conversa = criarConversa(status);
-      expect(() => conversa.confirmarPagamento(USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
-    },
-  );
+  it.each<StatusConversa>([
+    "ativa",
+    "aguardando_humano",
+    "em_atendimento",
+    "aguardando_cliente",
+    "pagamento_aprovado",
+    "aguardando_forms",
+    "resolvida",
+  ])("rejeita confirmarPagamento a partir de %s", (status) => {
+    const conversa = criarConversa(status);
+    expect(() => conversa.confirmarPagamento(USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
+  });
+});
+
+describe("Conversa - pagamento_aprovado e aguardando_forms são terminais do lado do painel", () => {
+  it("rejeita mover a partir de pagamento_aprovado via drag genérico (só o n8n resolve, via webhook)", () => {
+    const conversa = criarConversa("pagamento_aprovado");
+    expect(() => conversa.moverPara("resolvida", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
+  });
+
+  it("nunca aceita 'pagamento_aprovado' como alvo do drag genérico (só ConfirmarPagamento)", () => {
+    const conversa = criarConversa("aguardando_financeiro");
+    expect(() => conversa.moverPara("pagamento_aprovado", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
+  });
+
+  it("rejeita mover a partir de aguardando_forms (bot-owned, o painel nunca escreve nele)", () => {
+    const conversa = criarConversa("aguardando_forms");
+    expect(() => conversa.moverPara("resolvida", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
+  });
+
+  it("nunca aceita 'aguardando_forms' como alvo do drag genérico", () => {
+    const conversa = criarConversa("pagamento_aprovado");
+    expect(() => conversa.moverPara("aguardando_forms", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
+  });
 });
 
 describe("Conversa - moverPara (drag-and-drop genérico)", () => {
@@ -158,7 +204,7 @@ describe("Conversa - moverPara (drag-and-drop genérico)", () => {
     expect(() => conversa.moverPara("aguardando_financeiro", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });
 
-  it("aguardando_financeiro -> resolvida NÃO é permitido via drag genérico (só ConfirmarPagamento)", () => {
+  it("aguardando_financeiro -> resolvida NÃO é permitido via drag genérico (o caminho é ConfirmarPagamento -> pagamento_aprovado, depois o n8n resolve)", () => {
     const conversa = criarConversa("aguardando_financeiro");
     expect(() => conversa.moverPara("resolvida", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });

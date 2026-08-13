@@ -3,6 +3,10 @@ import type { Clock } from "@/core/application/ports/Clock";
 import type { ConversaRepository, FiltroConversas, PaginaConversas } from "@/core/application/ports/ConversaRepository";
 import type { Evento, EventoRepository } from "@/core/application/ports/EventoRepository";
 import type { TransacaoContexto, UnitOfWork } from "@/core/application/ports/UnitOfWork";
+import type {
+  PayloadFinalizarAtendimento,
+  WebhookFinalizarAtendimento,
+} from "@/core/application/ports/WebhookFinalizarAtendimento";
 import type { EventoDominio } from "@/core/domain/Conversa";
 
 export class FakeConversaRepository implements ConversaRepository {
@@ -63,6 +67,16 @@ export class FakeClock implements Clock {
 
   agora(): Date {
     return this.fixa;
+  }
+}
+
+export class FakeWebhookFinalizarAtendimento implements WebhookFinalizarAtendimento {
+  readonly chamadas: PayloadFinalizarAtendimento[] = [];
+  falharCom: Error | null = null;
+
+  async notificar(payload: PayloadFinalizarAtendimento): Promise<void> {
+    this.chamadas.push(payload);
+    if (this.falharCom) throw this.falharCom;
   }
 }
 

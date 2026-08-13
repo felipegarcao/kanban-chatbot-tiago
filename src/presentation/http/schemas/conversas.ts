@@ -6,6 +6,8 @@ const statusConversaSchema = z.enum([
   "aguardando_financeiro",
   "em_atendimento",
   "aguardando_cliente",
+  "pagamento_aprovado",
+  "aguardando_forms",
   "resolvida",
 ]);
 

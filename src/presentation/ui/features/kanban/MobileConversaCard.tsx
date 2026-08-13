@@ -16,6 +16,8 @@ const ROTULO_STATUS: Record<StatusConversa, string> = {
   aguardando_financeiro: "Aguardando financeiro",
   em_atendimento: "Em atendimento",
   aguardando_cliente: "Aguardando cliente",
+  pagamento_aprovado: "Pagamento aprovado",
+  aguardando_forms: "Aguardando formulário",
   resolvida: "Resolvida",
 };
 

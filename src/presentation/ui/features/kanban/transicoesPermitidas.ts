@@ -26,6 +26,8 @@ export function alvosPermitidos(statusAtual: StatusConversa): StatusConversa[] {
     "aguardando_financeiro",
     "em_atendimento",
     "aguardando_cliente",
+    "pagamento_aprovado",
+    "aguardando_forms",
     "resolvida",
   ];
 
