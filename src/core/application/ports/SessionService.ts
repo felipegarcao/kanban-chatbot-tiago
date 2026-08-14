@@ -8,7 +8,7 @@ export interface SessaoPayload {
 /**
  * `sistemasPermitidos` fica de fora do JWT de propósito: é lido fresco do banco a cada
  * request (ver ObterUsuarioLogado), para que revogar acesso a um projeto surta efeito
- * imediato em vez de esperar o token de 2h expirar.
+ * imediato em vez de esperar o token de 8h expirar.
  */
 export interface SessionService {
   criar(payload: SessaoPayload): Promise<string>;

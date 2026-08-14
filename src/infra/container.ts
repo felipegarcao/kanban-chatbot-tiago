@@ -34,6 +34,8 @@ import { RevogarAcessoAoProjeto } from "@/core/application/use-cases/RevogarAces
 import { ListarUsuarios } from "@/core/application/use-cases/ListarUsuarios";
 import { CriarUsuario } from "@/core/application/use-cases/CriarUsuario";
 import { EditarUsuario } from "@/core/application/use-cases/EditarUsuario";
+import { AtualizarMeuPerfil } from "@/core/application/use-cases/AtualizarMeuPerfil";
+import { AlterarMinhaSenha } from "@/core/application/use-cases/AlterarMinhaSenha";
 import { DeletarUsuario } from "@/core/application/use-cases/DeletarUsuario";
 import { DeletarProjeto } from "@/core/application/use-cases/DeletarProjeto";
 import { ConfigurarColunasDoProjeto } from "@/core/application/use-cases/ConfigurarColunasDoProjeto";
@@ -84,6 +86,8 @@ function montarContainer() {
       listarUsuarios: new ListarUsuarios(usuarios, usuarioSistemas),
       criarUsuario: new CriarUsuario(usuarios, hasher),
       editarUsuario: new EditarUsuario(usuarios),
+      atualizarMeuPerfil: new AtualizarMeuPerfil(usuarios),
+      alterarMinhaSenha: new AlterarMinhaSenha(usuarios, hasher),
       deletarUsuario: new DeletarUsuario(usuarios),
       deletarProjeto: new DeletarProjeto(projetos),
       configurarColunasDoProjeto: new ConfigurarColunasDoProjeto(colunas),

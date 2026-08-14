@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, FolderKanban, LogOut, MessagesSquare, Users } from "lucide-react";
+import { BarChart3, FolderKanban, LogOut, MessagesSquare, PanelLeftClose, Settings, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SistemaSelector } from "@/presentation/ui/components/SistemaSelector";
 import { ThemeToggle } from "@/presentation/ui/components/ThemeToggle";
@@ -23,7 +23,15 @@ const ITENS_NAV: ItemNav[] = [
   { href: "/admin/usuarios", rotulo: "Usuários", Icone: Users, somenteAdmin: true },
 ];
 
-export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNavegar?: () => void }) {
+export function Sidebar({
+  usuario,
+  onNavegar,
+  onFechar,
+}: {
+  usuario: UsuarioSessao;
+  onNavegar?: () => void;
+  onFechar?: () => void;
+}) {
   const pathname = usePathname();
   const logout = useLogout();
 
@@ -33,7 +41,18 @@ export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNave
         <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-accent text-sm font-bold text-accent-foreground">
           P
         </span>
-        <span className="text-sm font-semibold text-foreground">Painel de Conversas</span>
+        <span className="flex-1 text-sm font-semibold text-foreground">Painel de Conversas</span>
+        {onFechar && (
+          <button
+            type="button"
+            onClick={onFechar}
+            aria-label="Fechar menu lateral"
+            title="Fechar menu lateral"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-muted transition-colors hover:bg-border/40 hover:text-foreground"
+          >
+            <PanelLeftClose size={16} aria-hidden="true" />
+          </button>
+        )}
       </div>
 
       <div className="px-3">
@@ -72,6 +91,15 @@ export function Sidebar({ usuario, onNavegar }: { usuario: UsuarioSessao; onNave
             <p className="truncate text-sm font-medium text-foreground">{usuario.nome}</p>
             <p className="truncate text-xs text-muted">{usuario.papel === "admin" ? "Admin" : "Operador"}</p>
           </div>
+          <Link
+            href="/app/perfil"
+            onClick={onNavegar}
+            aria-label="Meu perfil"
+            title="Meu perfil"
+            className="flex min-h-[36px] min-w-[36px] items-center justify-center rounded-lg text-muted transition-colors hover:bg-border/40 hover:text-foreground"
+          >
+            <Settings size={16} aria-hidden="true" />
+          </Link>
           <button
             type="button"
             onClick={() => logout.mutate()}

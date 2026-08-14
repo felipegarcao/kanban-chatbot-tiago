@@ -57,6 +57,14 @@ export class Usuario {
     this.props.nome = nome;
   }
 
+  alterarEmail(email: string): void {
+    this.props.email = email;
+  }
+
+  redefinirSenha(senhaHash: string): void {
+    this.props.senhaHash = senhaHash;
+  }
+
   redefinirPapel(papel: Papel): void {
     this.props.papel = papel;
   }

@@ -45,8 +45,8 @@ export class PgUsuarioRepository implements UsuarioRepository {
   async salvar(usuario: Usuario): Promise<void> {
     const props = usuario.toProps();
     await this.db.query(
-      `UPDATE felipe_system.usuarios SET nome = $2, papel = $3, ativo = $4 WHERE id = $1`,
-      [props.id, props.nome, props.papel, props.ativo],
+      `UPDATE felipe_system.usuarios SET nome = $2, email = $3, senha_hash = $4, papel = $5, ativo = $6 WHERE id = $1`,
+      [props.id, props.nome, props.email, props.senhaHash, props.papel, props.ativo],
     );
   }
 

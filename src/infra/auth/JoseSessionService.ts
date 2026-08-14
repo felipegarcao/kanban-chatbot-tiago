@@ -2,7 +2,7 @@ import { jwtVerify, SignJWT } from "jose";
 import type { SessaoPayload, SessionService } from "@/core/application/ports/SessionService";
 import type { Papel } from "@/core/domain/Usuario";
 
-const DURACAO_SESSAO = "2h";
+const DURACAO_SESSAO = "8h";
 
 export class JoseSessionService implements SessionService {
   private readonly chave: Uint8Array;

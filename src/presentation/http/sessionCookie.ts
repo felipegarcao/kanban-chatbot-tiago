@@ -2,7 +2,7 @@ import type { NextResponse } from "next/server";
 import { env } from "@/infra/config/env";
 
 export const NOME_COOKIE_SESSAO = "painel_sessao";
-const DURACAO_COOKIE_SEGUNDOS = 60 * 60 * 2; // 2h, igual à duração do JWT
+const DURACAO_COOKIE_SEGUNDOS = 60 * 60 * 8; // 8h, igual à duração do JWT
 
 export function definirCookieSessao(resposta: NextResponse, token: string): void {
   resposta.cookies.set(NOME_COOKIE_SESSAO, token, {
