@@ -37,22 +37,25 @@ export const STATUS_ESCRITOS_PELO_PAINEL: readonly StatusConversa[] = [
  * Alvos alcançáveis pelo drag-and-drop genérico do kanban (MoverConversaDeStatus).
  * `ativa` fica de fora de propósito: só `devolverParaBot()` pode escrevê-lo — é uma
  * exceção deliberada à regra "painel nunca escreve ativa", tratada como ação explícita
- * fora do mecanismo de arrastar-e-soltar. `aguardando_financeiro` nunca é alvo do painel;
- * `pagamento_aprovado` só é alcançado via confirmarPagamento (ação explícita, não drag) —
- * a partir daí quem toca a conversa é o n8n (webhook finalizar-atendimento manda o
- * formulário, grava `aguardando_forms` e, quando o cliente confirmar, grava `resolvida`).
+ * fora do mecanismo de arrastar-e-soltar. `aguardando_financeiro` é alvo do painel a
+ * partir de `em_atendimento` ou `ativa` — o operador encaminha a conversa pro financeiro
+ * manualmente; dali em diante quem confirma é `confirmarPagamento` (ação explícita, não
+ * drag). `pagamento_aprovado` só é alcançado via confirmarPagamento — a partir daí quem
+ * toca a conversa é o n8n (webhook finalizar-atendimento manda o formulário, grava
+ * `aguardando_forms` e, quando o cliente confirmar, grava `resolvida`).
  */
 const ALVOS_MOVIMENTO_GENERICO: ReadonlySet<StatusConversa> = new Set([
   "em_atendimento",
   "aguardando_cliente",
+  "aguardando_financeiro",
   "resolvida",
 ]);
 
 const TRANSICOES_GENERICAS: Readonly<Record<StatusConversa, ReadonlySet<StatusConversa>>> = {
-  ativa: new Set(),
+  ativa: new Set(["aguardando_financeiro"]),
   aguardando_humano: new Set(["em_atendimento"]),
   aguardando_financeiro: new Set(),
-  em_atendimento: new Set(["aguardando_cliente", "resolvida"]),
+  em_atendimento: new Set(["aguardando_cliente", "aguardando_financeiro", "resolvida"]),
   aguardando_cliente: new Set(["em_atendimento", "resolvida"]),
   pagamento_aprovado: new Set(),
   aguardando_forms: new Set(),
@@ -188,6 +191,14 @@ export class Conversa {
     });
   }
 
+  /** em_atendimento | ativa -> aguardando_financeiro */
+  encaminharParaFinanceiro(usuarioId: number): void {
+    this.aplicarTransicao("aguardando_financeiro", ["em_atendimento", "ativa"], {
+      tipo: "conversa_encaminhada_financeiro",
+      detalhes: { usuario_id: usuarioId },
+    });
+  }
+
   /**
    * aguardando_financeiro -> pagamento_aprovado. Idempotente por natureza: se o status já
    * não for `aguardando_financeiro` (ex.: dupla confirmação), lança TransicaoDeStatusInvalida
@@ -228,6 +239,10 @@ export class Conversa {
     }
     if (novoStatus === "resolvida") {
       this.resolver(usuarioId);
+      return;
+    }
+    if (novoStatus === "aguardando_financeiro") {
+      this.encaminharParaFinanceiro(usuarioId);
       return;
     }
     if (novoStatus === "em_atendimento" && this.props.status === "aguardando_cliente") {
