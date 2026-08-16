@@ -39,7 +39,7 @@ export function KanbanColuna({ sistemaId, coluna, busca, intervalo, total, onSel
 
       <div
         ref={setNodeRef}
-        className={`flex-1 overflow-y-auto p-2 transition-colors ${isOver ? "bg-accent/5" : ""}`}
+        className={`flex-1 overflow-y-auto overscroll-y-contain touch-pan-y p-2 transition-colors [-webkit-overflow-scrolling:touch] ${isOver ? "bg-accent/5" : ""}`}
       >
         <div className="flex flex-col gap-2">
           {query.isPending &&

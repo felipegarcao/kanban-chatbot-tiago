@@ -36,6 +36,7 @@ import { CriarUsuario } from "@/core/application/use-cases/CriarUsuario";
 import { EditarUsuario } from "@/core/application/use-cases/EditarUsuario";
 import { AtualizarMeuPerfil } from "@/core/application/use-cases/AtualizarMeuPerfil";
 import { AlterarMinhaSenha } from "@/core/application/use-cases/AlterarMinhaSenha";
+import { RedefinirSenha } from "@/core/application/use-cases/RedefinirSenha";
 import { DeletarUsuario } from "@/core/application/use-cases/DeletarUsuario";
 import { DeletarProjeto } from "@/core/application/use-cases/DeletarProjeto";
 import { ConfigurarColunasDoProjeto } from "@/core/application/use-cases/ConfigurarColunasDoProjeto";
@@ -88,6 +89,7 @@ function montarContainer() {
       editarUsuario: new EditarUsuario(usuarios),
       atualizarMeuPerfil: new AtualizarMeuPerfil(usuarios),
       alterarMinhaSenha: new AlterarMinhaSenha(usuarios, hasher),
+      redefinirSenha: new RedefinirSenha(usuarios, hasher),
       deletarUsuario: new DeletarUsuario(usuarios),
       deletarProjeto: new DeletarProjeto(projetos),
       configurarColunasDoProjeto: new ConfigurarColunasDoProjeto(colunas),

@@ -80,6 +80,10 @@ function LoginForm() {
             onChange={(e) => setSenha(e.target.value)}
           />
 
+          <Link href="/esqueci-senha" className="-mt-2 self-end text-sm font-medium text-accent hover:underline">
+            Esqueci minha senha
+          </Link>
+
           {mensagemErro && (
             <p role="alert" className="text-sm text-critical">
               {mensagemErro}

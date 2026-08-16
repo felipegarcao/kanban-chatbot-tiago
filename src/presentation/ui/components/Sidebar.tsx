@@ -60,23 +60,33 @@ export function Sidebar({
       </div>
 
       <nav className="mt-4 flex flex-col gap-0.5 px-2">
-        {ITENS_NAV.filter((item) => !item.somenteAdmin || usuario.papel === "admin").map((item) => {
-          const ativo = item.href === "/app" ? pathname === "/app" : pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavegar}
-              aria-current={ativo ? "page" : undefined}
-              className={`flex min-h-[44px] items-center gap-2.5 rounded-lg px-3 text-sm font-medium transition-colors ${
-                ativo ? "bg-accent/15 text-accent" : "text-muted hover:bg-border/40 hover:text-foreground"
-              }`}
-            >
-              <item.Icone size={17} aria-hidden="true" />
-              {item.rotulo}
-            </Link>
-          );
-        })}
+        {(() => {
+          const itensVisiveis = ITENS_NAV.filter((item) => !item.somenteAdmin || usuario.papel === "admin");
+          // Rotas de admin são todas prefixadas por "/admin", então usar apenas `startsWith`
+          // faz "Projetos" (/admin) ficar marcado como ativo junto de "Usuários" (/admin/usuarios).
+          // Em vez disso, escolhe o item cujo href é o prefixo mais específico (mais longo) da rota atual.
+          const hrefAtivo = itensVisiveis
+            .filter((item) => (item.href === "/app" ? pathname === "/app" : pathname === item.href || pathname.startsWith(`${item.href}/`)))
+            .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+
+          return itensVisiveis.map((item) => {
+            const ativo = item.href === hrefAtivo;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavegar}
+                aria-current={ativo ? "page" : undefined}
+                className={`flex min-h-[44px] items-center gap-2.5 rounded-lg px-3 text-sm font-medium transition-colors ${
+                  ativo ? "bg-accent/15 text-accent" : "text-muted hover:bg-border/40 hover:text-foreground"
+                }`}
+              >
+                <item.Icone size={17} aria-hidden="true" />
+                {item.rotulo}
+              </Link>
+            );
+          });
+        })()}
       </nav>
 
       <div className="flex-1" />

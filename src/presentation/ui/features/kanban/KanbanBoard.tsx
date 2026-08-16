@@ -88,7 +88,7 @@ export function KanbanBoard({ sistemaId }: { sistemaId: number }) {
         )}
 
         {colunas.isSuccess && (
-          <div className="flex flex-1 gap-3 overflow-x-auto pb-2">
+          <div className="flex flex-1 gap-3 overflow-x-auto overscroll-x-contain pb-2 touch-pan-x [-webkit-overflow-scrolling:touch]">
             {colunas.data.map((coluna) => (
               <KanbanColuna
                 key={coluna.id}

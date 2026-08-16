@@ -66,6 +66,34 @@ export function registrarTentativaDeRegistro(chave: string): void {
   registro.tentativas += 1;
 }
 
+/**
+ * Limite separado para o "esqueci minha senha": como não há confirmação por email, o email
+ * sozinho já troca a senha — por isso o limite é apertado e conta toda tentativa (sucesso
+ * incluso), tanto por IP quanto por email, pra dificultar tentativa de força bruta de emails.
+ */
+const JANELA_REDEFINICAO_MS = 15 * 60 * 1000;
+const LIMITE_REDEFINICOES = 5;
+const redefinicoesPorChave = new Map<string, Registro>();
+
+export function excedeuLimiteDeRedefinicao(chave: string): boolean {
+  const registro = redefinicoesPorChave.get(chave);
+  if (!registro) return false;
+  if (Date.now() - registro.desde > JANELA_REDEFINICAO_MS) {
+    redefinicoesPorChave.delete(chave);
+    return false;
+  }
+  return registro.tentativas >= LIMITE_REDEFINICOES;
+}
+
+export function registrarTentativaDeRedefinicao(chave: string): void {
+  const registro = redefinicoesPorChave.get(chave);
+  if (!registro || Date.now() - registro.desde > JANELA_REDEFINICAO_MS) {
+    redefinicoesPorChave.set(chave, { tentativas: 1, desde: Date.now() });
+    return;
+  }
+  registro.tentativas += 1;
+}
+
 export function obterIp(req: NextRequest): string {
   return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "desconhecido";
 }
