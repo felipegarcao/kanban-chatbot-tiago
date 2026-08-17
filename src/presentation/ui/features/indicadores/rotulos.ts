@@ -8,6 +8,7 @@ export const ROTULO_STATUS: Record<StatusConversa, string> = {
   aguardando_cliente: "Aguardando cliente",
   pagamento_aprovado: "Pagamento aprovado",
   aguardando_forms: "Aguardando formulário",
+  encaminhado: "Encaminhado",
   resolvida: "Resolvida",
 };
 
@@ -24,10 +25,19 @@ export const ORDEM_STATUS: StatusConversa[] = [
   "aguardando_cliente",
   "pagamento_aprovado",
   "aguardando_forms",
+  "encaminhado",
   "resolvida",
 ];
 
-/** Slot categórico fixo (paleta validada em globals.css) — índice = posição em ORDEM_STATUS. */
+/**
+ * Slot categórico fixo (paleta validada em globals.css, 8 slots — chart-1..chart-8) — índice
+ * normalmente = posição em ORDEM_STATUS. A paleta valida só 8 hues (skill dataviz: "a 9th
+ * series is never a generated hue"), e já são 9 status — em vez de inventar um hex fora do
+ * documentado, `encaminhado` reaproveita a cor de `ativa` (chart-1), a mais distante dele na
+ * lista, para minimizar colisão com vizinhos reais. BarraHorizontal sempre mostra rótulo
+ * direto ao lado da cor (nunca só a cor carrega o significado), então a identidade nunca
+ * depende só da cor mesmo nesse reaproveitamento.
+ */
 export const COR_STATUS: Record<StatusConversa, string> = {
   ativa: "var(--color-chart-1)",
   aguardando_humano: "var(--color-chart-2)",
@@ -36,6 +46,7 @@ export const COR_STATUS: Record<StatusConversa, string> = {
   aguardando_cliente: "var(--color-chart-5)",
   pagamento_aprovado: "var(--color-chart-6)",
   aguardando_forms: "var(--color-chart-7)",
+  encaminhado: "var(--color-chart-1)",
   resolvida: "var(--color-chart-8)",
 };
 

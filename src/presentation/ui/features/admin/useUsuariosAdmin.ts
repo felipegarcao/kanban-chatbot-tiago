@@ -29,6 +29,7 @@ export interface EditarUsuarioInput {
   nome?: string;
   papel?: Papel;
   ativo?: boolean;
+  senhaNova?: string;
 }
 
 export function useEditarUsuario() {

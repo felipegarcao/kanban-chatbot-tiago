@@ -86,7 +86,7 @@ function montarContainer() {
       revogarAcessoAoProjeto: new RevogarAcessoAoProjeto(usuarioSistemas),
       listarUsuarios: new ListarUsuarios(usuarios, usuarioSistemas),
       criarUsuario: new CriarUsuario(usuarios, hasher),
-      editarUsuario: new EditarUsuario(usuarios),
+      editarUsuario: new EditarUsuario(usuarios, hasher),
       atualizarMeuPerfil: new AtualizarMeuPerfil(usuarios),
       alterarMinhaSenha: new AlterarMinhaSenha(usuarios, hasher),
       redefinirSenha: new RedefinirSenha(usuarios, hasher),

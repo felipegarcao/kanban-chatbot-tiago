@@ -28,6 +28,7 @@ export function alvosPermitidos(statusAtual: StatusConversa): StatusConversa[] {
     "aguardando_cliente",
     "pagamento_aprovado",
     "aguardando_forms",
+    "encaminhado",
     "resolvida",
   ];
 

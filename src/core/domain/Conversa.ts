@@ -8,6 +8,7 @@ export type StatusConversa =
   | "aguardando_cliente"
   | "pagamento_aprovado"
   | "aguardando_forms"
+  | "encaminhado"
   | "resolvida";
 
 export type EstadoConversa =
@@ -25,11 +26,16 @@ export type PrioridadeConversa = "normal" | "critica";
  * Estados que o painel escreve. `ativa`, `aguardando_financeiro` e `aguardando_forms` são
  * exclusivos do n8n — `aguardando_forms` é escrito pelo n8n depois do webhook
  * finalizar-atendimento, enquanto espera o cliente preencher e confirmar o formulário.
+ * `encaminhado` é escrito pelo painel a partir de `aguardando_forms` (fluxo normal, depois que
+ * o cliente confirma o formulário) ou diretamente de `aguardando_humano`/`em_atendimento`
+ * (encaminhamento antecipado, sem passar pelo financeiro/formulário) — em qualquer caso é o
+ * penúltimo passo do fluxo, logo antes de `resolvida`.
  */
 export const STATUS_ESCRITOS_PELO_PAINEL: readonly StatusConversa[] = [
   "em_atendimento",
   "aguardando_cliente",
   "pagamento_aprovado",
+  "encaminhado",
   "resolvida",
 ];
 
@@ -42,23 +48,30 @@ export const STATUS_ESCRITOS_PELO_PAINEL: readonly StatusConversa[] = [
  * manualmente; dali em diante quem confirma é `confirmarPagamento` (ação explícita, não
  * drag). `pagamento_aprovado` só é alcançado via confirmarPagamento — a partir daí quem
  * toca a conversa é o n8n (webhook finalizar-atendimento manda o formulário, grava
- * `aguardando_forms` e, quando o cliente confirmar, grava `resolvida`).
+ * `aguardando_forms` e, quando o cliente confirmar, grava `resolvida`). `encaminhado` é alvo
+ * a partir de `aguardando_humano`, `em_atendimento` ou `aguardando_forms` — o operador
+ * encaminha a conversa pra outro setor/fila antes de resolver, seja de forma antecipada
+ * (ainda em atendimento) ou depois do formulário confirmado; dali, `resolvida` volta a ser
+ * alcançável via drag genérico (delega pra `resolver()`, que agora também aceita
+ * `encaminhado` como origem).
  */
 const ALVOS_MOVIMENTO_GENERICO: ReadonlySet<StatusConversa> = new Set([
   "em_atendimento",
   "aguardando_cliente",
   "aguardando_financeiro",
+  "encaminhado",
   "resolvida",
 ]);
 
 const TRANSICOES_GENERICAS: Readonly<Record<StatusConversa, ReadonlySet<StatusConversa>>> = {
   ativa: new Set(["aguardando_financeiro"]),
-  aguardando_humano: new Set(["em_atendimento"]),
+  aguardando_humano: new Set(["em_atendimento", "encaminhado"]),
   aguardando_financeiro: new Set(),
-  em_atendimento: new Set(["aguardando_cliente", "aguardando_financeiro", "resolvida"]),
+  em_atendimento: new Set(["aguardando_cliente", "aguardando_financeiro", "encaminhado", "resolvida"]),
   aguardando_cliente: new Set(["em_atendimento", "resolvida"]),
   pagamento_aprovado: new Set(),
-  aguardando_forms: new Set(),
+  aguardando_forms: new Set(["encaminhado"]),
+  encaminhado: new Set(["resolvida"]),
   resolvida: new Set(),
 };
 
@@ -183,10 +196,23 @@ export class Conversa {
     });
   }
 
-  /** em_atendimento | aguardando_cliente -> resolvida */
+  /** em_atendimento | aguardando_cliente | encaminhado -> resolvida */
   resolver(usuarioId: number): void {
-    this.aplicarTransicao("resolvida", ["em_atendimento", "aguardando_cliente"], {
+    this.aplicarTransicao("resolvida", ["em_atendimento", "aguardando_cliente", "encaminhado"], {
       tipo: "conversa_resolvida",
+      detalhes: { usuario_id: usuarioId },
+    });
+  }
+
+  /**
+   * aguardando_humano | em_atendimento | aguardando_forms -> encaminhado. Passo manual do
+   * operador para encaminhar a conversa pra outro setor/fila antes de marcar como resolvida —
+   * seja de forma antecipada (ainda aguardando ou em atendimento) ou depois que o cliente
+   * confirma o formulário.
+   */
+  encaminhar(usuarioId: number): void {
+    this.aplicarTransicao("encaminhado", ["aguardando_humano", "em_atendimento", "aguardando_forms"], {
+      tipo: "conversa_encaminhada",
       detalhes: { usuario_id: usuarioId },
     });
   }
@@ -206,8 +232,10 @@ export class Conversa {
    *
    * Não vai direto para `resolvida`: a partir daqui o caso de uso aciona o webhook
    * `finalizar-atendimento` do n8n, que manda o formulário ao cliente (status vira
-   * `aguardando_forms`, escrito pelo n8n) e só quando o cliente confirmar é que o próprio
-   * n8n grava `resolvida` diretamente — o painel não escreve `resolvida` nesse fluxo.
+   * `aguardando_forms`, escrito pelo n8n). Quando o cliente confirmar, o operador encaminha
+   * manualmente a conversa (`encaminhar()`, aguardando_forms -> encaminhado) e só então marca
+   * como `resolvida` — diferente do que essa docstring dizia antes de `encaminhado` existir,
+   * o painel volta a escrever `resolvida` nesse fluxo, só que depois desse passo extra.
    */
   confirmarPagamento(usuarioId: number, agora: Date, opts?: { valor?: number; observacao?: string }): void {
     this.aplicarTransicao("pagamento_aprovado", ["aguardando_financeiro"], {
@@ -243,6 +271,10 @@ export class Conversa {
     }
     if (novoStatus === "aguardando_financeiro") {
       this.encaminharParaFinanceiro(usuarioId);
+      return;
+    }
+    if (novoStatus === "encaminhado") {
+      this.encaminhar(usuarioId);
       return;
     }
     if (novoStatus === "em_atendimento" && this.props.status === "aguardando_cliente") {

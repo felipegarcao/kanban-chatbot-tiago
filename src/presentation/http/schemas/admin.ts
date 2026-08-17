@@ -23,6 +23,7 @@ export const editarUsuarioSchema = z.object({
   nome: z.string().trim().min(1).optional(),
   papel: z.enum(["admin", "operador"]).optional(),
   ativo: z.boolean().optional(),
+  senhaNova: z.string().min(8, "Senha precisa ter pelo menos 8 caracteres").optional(),
 });
 
 export const concederAcessoSchema = z.object({

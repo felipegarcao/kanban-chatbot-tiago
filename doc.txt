@@ -1,0 +1,297 @@
+==================================================================
+ MANUAL DO OPERADOR - PAINEL DE CONVERSAS
+==================================================================
+
+Este manual explica, de forma simples, como usar o Painel de
+Conversas no dia a dia. Ele foi escrito para quem está usando o
+sistema pela primeira vez e não precisa entender nada de
+tecnologia para acompanhar.
+
+
+------------------------------------------------------------------
+1. O QUE É ESSE SISTEMA
+------------------------------------------------------------------
+
+O Painel de Conversas mostra, em formato de quadro (parecido com
+um quadro de post-its), todas as conversas que estão acontecendo
+com os clientes pelo WhatsApp.
+
+Cada conversa é um "cartão". Esse cartão vai passando por
+colunas diferentes conforme o atendimento avança - por exemplo,
+de "Aguardando humano" para "Em atendimento" e depois para
+"Resolvida".
+
+Um robô (bot) conversa automaticamente com o cliente no começo.
+Quando o robô identifica que precisa de uma pessoa para ajudar,
+a conversa aparece no seu painel para você assumir.
+
+IMPORTANTE: o painel NÃO é um chat. Você não digita mensagens
+para o cliente aqui dentro. As mensagens continuam sendo trocadas
+pelo WhatsApp normalmente. Aqui você acompanha o histórico da
+conversa e organiza o atendimento (assumir, mover de coluna,
+confirmar pagamento, encerrar etc).
+
+
+------------------------------------------------------------------
+2. COMO ACESSAR O PAINEL
+------------------------------------------------------------------
+
+2.1 Fazendo login
+
+  1. Abra o endereço do sistema no navegador.
+  2. Digite seu e-mail e sua senha.
+  3. Clique em "Entrar".
+
+Se você esqueceu sua senha:
+
+  1. Na tela de login, clique em "Esqueci minha senha".
+  2. Informe seu e-mail.
+  3. Cadastre uma nova senha diretamente na tela.
+
+Se você ainda não tem uma conta:
+
+  1. Clique em "Criar conta" na tela de login.
+  2. Preencha seus dados e cadastre-se.
+  3. Atenção: uma conta recém-criada NÃO tem acesso a nenhum
+     projeto ainda. Você precisa avisar um administrador para
+     liberar o acesso ao projeto correto. Sem isso, o painel vai
+     aparecer vazio, com um aviso pedindo para falar com um
+     administrador.
+
+2.2 Instalando como aplicativo no celular (opcional)
+
+O painel pode ser instalado no celular como se fosse um
+aplicativo, com ícone na tela inicial e abrindo em tela cheia
+(sem a barra do navegador).
+
+  - No Android/Chrome: abra o menu (três pontinhos) e toque em
+    "Instalar aplicativo" ou "Adicionar à tela inicial".
+  - No iPhone/Safari: toque no ícone de compartilhar e escolha
+    "Adicionar à Tela de Início".
+
+Isso é opcional, mas facilita muito o acesso rápido pelo celular.
+
+
+------------------------------------------------------------------
+3. CONHECENDO A TELA PRINCIPAL
+------------------------------------------------------------------
+
+Depois de entrar, você verá o quadro (Kanban) com as conversas
+organizadas em colunas.
+
+- No computador: as colunas ficam lado a lado, e você pode
+  arrastar os cartões de uma coluna para outra.
+- No celular: as colunas aparecem como abas que você pode
+  deslizar para o lado, e a lista de conversas rola para baixo.
+
+No topo ou na lateral da tela você também encontra:
+
+  - Um campo de BUSCA, para procurar uma conversa pelo nome ou
+    telefone do cliente.
+  - Um filtro de DATA, para ver conversas de um período
+    específico.
+  - Um menu lateral com os itens:
+      * Conversas    -> volta para o quadro principal
+      * Indicadores  -> mostra estatísticas de atendimento
+      * Meu perfil   -> onde você edita seus próprios dados
+      * Sair         -> encerra sua sessão
+  - Um botão para trocar entre tema claro e escuro.
+
+Se você tiver acesso a mais de um projeto/empresa, existe um
+seletor para trocar entre eles.
+
+Cada cartão de conversa mostra:
+  - Nome e telefone do cliente
+  - Um trecho da última mensagem
+  - Há quanto tempo essa mensagem foi enviada
+  - Uma etiqueta "Crítica", quando a conversa é prioritária
+  - Uma etiqueta indicando em que ponto da conversa automática
+    (do robô) o cliente está
+
+
+------------------------------------------------------------------
+4. AS COLUNAS (STATUS) DE UMA CONVERSA
+------------------------------------------------------------------
+
+Uma conversa passa, normalmente, pelas seguintes etapas:
+
+  1. Ativa (bot)
+     O robô está conversando sozinho com o cliente. Nenhuma ação
+     sua é necessária.
+
+  2. Aguardando humano
+     O robô identificou que precisa de um atendente. A conversa
+     está esperando alguém assumir.
+
+  3. Em atendimento
+     Você assumiu a conversa e está cuidando dela.
+
+  4. Aguardando cliente
+     Você já respondeu e está esperando o cliente responder de
+     volta.
+
+  5. Aguardando financeiro
+     A conversa foi encaminhada para confirmação de pagamento.
+
+  6. Pagamento aprovado / Aguardando formulário
+     Etapas automáticas do sistema, após a confirmação do
+     pagamento (envio e preenchimento de um formulário pelo
+     cliente). Você não precisa fazer nada nessas duas etapas.
+
+  7. Encaminhado
+     Depois que o formulário é preenchido, você encaminha a
+     conversa para a etapa seguinte (outro setor/fila). Também é
+     possível encaminhar direto a partir de "Aguardando humano"
+     ou "Em atendimento", quando o caso já pode ser direcionado
+     para outro setor sem passar pelo financeiro/formulário.
+
+  8. Resolvida
+     Atendimento finalizado.
+
+Observação: as colunas que aparecem no seu quadro dependem de
+como o administrador configurou o projeto. Pode ser que nem
+todas as etapas acima estejam visíveis no seu caso.
+
+
+------------------------------------------------------------------
+5. O QUE VOCÊ PODE FAZER EM CADA CONVERSA
+------------------------------------------------------------------
+
+Clique em um cartão para abrir os detalhes da conversa. Vai
+aparecer um painel (na lateral, no computador, ou ocupando a
+tela, no celular) com:
+
+  - Nome e telefone do cliente
+  - Status atual
+  - Histórico de mensagens trocadas (somente para leitura)
+  - Botões de ação, que mudam de acordo com o status atual da
+    conversa:
+
+  Quando a conversa está "Aguardando humano":
+    -> Botão "Assumir conversa"
+
+  Quando a conversa está "Em atendimento":
+    -> "Aguardar cliente"
+    -> "Marcar como resolvida"
+    -> "Devolver para o bot" (cuidado: isso reativa as respostas
+       automáticas do robô no WhatsApp imediatamente)
+
+  Quando a conversa está "Aguardando cliente":
+    -> "Retomar atendimento"
+    -> "Marcar como resolvida"
+
+  Quando a conversa está "Aguardando financeiro":
+    -> "Confirmar pagamento" (abre uma janela onde você pode
+       informar o valor recebido e uma observação, ambos
+       opcionais)
+
+  Quando a conversa está "Aguardando formulário" ou "Pagamento
+  aprovado":
+    -> Nenhuma ação necessária, é uma etapa automática do
+       sistema.
+
+  Quando a conversa está "Encaminhado":
+    -> "Marcar como resolvida"
+
+Observação: a coluna "Encaminhado" pode ser usada de duas
+formas. O caminho normal é depois que o cliente confirma o
+formulário ("Aguardando formulário" -> "Encaminhado"). Mas
+também é possível encaminhar uma conversa antecipadamente, ainda
+em "Aguardando humano" ou "Em atendimento", sem passar pelo
+financeiro e pelo formulário - use o menu "Mover para..." (ou
+arraste o cartão) e escolha "Encaminhado" quando fizer sentido
+encaminhar o atendimento direto para outro setor/fila.
+
+Além dos botões, você também pode mover um cartão de coluna
+diretamente:
+
+  - No computador: arraste o cartão até a coluna desejada.
+  - Ou use o menu "Mover para..." dentro do cartão/detalhe, que
+    lista as colunas para onde aquela conversa pode ir.
+  - No celular: toque no cartão para abrir as opções e escolha
+    "Mover para [status desejado]".
+
+Se o sistema não conseguir mover a conversa (por exemplo, por
+uma falha de conexão), aparece um aviso de erro e o cartão volta
+para o lugar de onde saiu.
+
+Um aviso amarelo aparece quando o robô está pausado naquela
+conversa (ou seja, enquanto ela estiver "com você", o robô não
+vai responder automaticamente ao cliente).
+
+
+------------------------------------------------------------------
+6. INDICADORES
+------------------------------------------------------------------
+
+No menu lateral, o item "Indicadores" mostra estatísticas do
+atendimento no período selecionado:
+
+  - Total de conversas
+  - Quantas foram resolvidas
+  - Quantas são críticas
+  - Tempo médio de atendimento
+  - Gráficos por status e por prioridade
+  - Gráfico de volume de conversas por dia
+  - Ranking de desempenho por operador (quantas conversas cada
+    pessoa assumiu e resolveu)
+
+
+------------------------------------------------------------------
+7. MEU PERFIL (SEUS DADOS DE ACESSO)
+------------------------------------------------------------------
+
+Em "Meu perfil", no menu lateral, você pode:
+
+  - Editar seu nome e e-mail
+  - Alterar sua senha (informando a senha atual, a nova senha e
+    a confirmação; a nova senha precisa ter no mínimo 8
+    caracteres)
+
+Não é possível cadastrar foto de perfil.
+
+Alterações como mudar seu papel de acesso, ativar/desativar sua
+conta ou liberar acesso a novos projetos só podem ser feitas por
+um administrador. Se precisar de algo assim, entre em contato
+com o administrador do sistema.
+
+
+------------------------------------------------------------------
+8. O QUE O OPERADOR NÃO PODE FAZER
+------------------------------------------------------------------
+
+Para manter a organização do sistema, algumas ações ficam
+disponíveis apenas para administradores:
+
+  - Criar, editar ou remover outros usuários
+  - Criar, editar ou remover projetos
+  - Configurar as colunas do quadro (nomes, cores, ordem)
+  - Conceder ou remover acesso de outras pessoas aos projetos
+
+Se você precisar de alguma dessas ações, peça a um administrador
+do sistema.
+
+
+------------------------------------------------------------------
+9. DÚVIDAS FREQUENTES
+------------------------------------------------------------------
+
+- "Não consigo ver nenhuma conversa, o quadro está vazio."
+  Provavelmente sua conta ainda não tem acesso liberado a um
+  projeto. Fale com um administrador.
+
+- "Posso conversar com o cliente por aqui?"
+  Não. As mensagens ao cliente são enviadas pelo WhatsApp. O
+  painel só mostra o histórico e organiza o atendimento.
+
+- "Movi a conversa errada, e agora?"
+  Basta mover novamente para a coluna correta pelo menu "Mover
+  para..." ou arrastando o cartão de volta.
+
+- "O que significa o aviso de 'bot pausado'?"
+  Significa que, enquanto a conversa estiver com você, o robô
+  não vai responder automaticamente ao cliente no WhatsApp.
+
+==================================================================
+ Fim do manual
+==================================================================

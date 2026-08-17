@@ -2,7 +2,7 @@
 
 import { use, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Save, Trash2 } from "lucide-react";
+import { KeyRound, Save, Trash2 } from "lucide-react";
 import { Button } from "@/presentation/ui/components/Button";
 import { ConfirmDialog } from "@/presentation/ui/components/ConfirmDialog";
 import { Field } from "@/presentation/ui/components/Field";
@@ -67,6 +67,8 @@ export default function EditarUsuarioPage({ params }: { params: Promise<{ usuari
         voltarRotulo="Usuários"
         rodape={
           <div className="flex flex-col gap-3">
+            <RedefinirSenhaForm usuarioId={usuario.id} />
+
             {projetos.isSuccess && (
               <div className="rounded-xl border border-border bg-surface p-4">
                 <p className="text-sm font-medium text-foreground">Acesso a projetos</p>
@@ -176,6 +178,80 @@ function FormularioEdicao({
         Salvar alterações
       </Button>
     </form>
+  );
+}
+
+function RedefinirSenhaForm({ usuarioId }: { usuarioId: number }) {
+  const [senhaNova, setSenhaNova] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [erroValidacao, setErroValidacao] = useState<string | null>(null);
+  const [sucesso, setSucesso] = useState(false);
+  const editar = useEditarUsuario();
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    setSucesso(false);
+    setErroValidacao(null);
+
+    if (senhaNova !== confirmarSenha) {
+      setErroValidacao("As senhas não coincidem.");
+      return;
+    }
+
+    editar.mutate(
+      { usuarioId, senhaNova },
+      {
+        onSuccess: () => {
+          setSucesso(true);
+          setSenhaNova("");
+          setConfirmarSenha("");
+        },
+      },
+    );
+  }
+
+  const mensagemErro =
+    erroValidacao ?? (editar.error instanceof ErroHttp ? editar.error.message : editar.isError ? "Não foi possível redefinir a senha." : null);
+
+  return (
+    <div className="rounded-xl border border-border bg-surface p-4">
+      <p className="text-sm font-medium text-foreground">Redefinir senha</p>
+      <p className="mt-0.5 text-xs text-muted">Define uma nova senha para o usuário sem precisar da senha atual.</p>
+      <form key={usuarioId} onSubmit={handleSubmit} className="mt-3 flex flex-col gap-3">
+        <Field
+          label="Nova senha"
+          type="password"
+          icone={KeyRound}
+          autoComplete="new-password"
+          minLength={8}
+          required
+          value={senhaNova}
+          onChange={(e) => { setSenhaNova(e.target.value); setSucesso(false); }}
+        />
+        <Field
+          label="Confirmar nova senha"
+          type="password"
+          icone={KeyRound}
+          autoComplete="new-password"
+          required
+          value={confirmarSenha}
+          onChange={(e) => { setConfirmarSenha(e.target.value); setSucesso(false); }}
+        />
+        {mensagemErro && (
+          <p role="alert" className="text-sm text-critical">
+            {mensagemErro}
+          </p>
+        )}
+        {sucesso && !editar.isPending && (
+          <p role="status" className="text-sm text-success">
+            Senha redefinida.
+          </p>
+        )}
+        <Button type="submit" variante="secondary" icone={KeyRound} carregando={editar.isPending} className="self-start">
+          Redefinir senha
+        </Button>
+      </form>
+    </div>
   );
 }
 

@@ -22,6 +22,7 @@ const ROTULO_STATUS: Record<StatusConversa, string> = {
   aguardando_cliente: "Aguardando cliente",
   pagamento_aprovado: "Pagamento aprovado",
   aguardando_forms: "Aguardando formulário",
+  encaminhado: "Encaminhado",
   resolvida: "Resolvida",
 };
 

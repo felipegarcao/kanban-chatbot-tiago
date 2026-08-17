@@ -41,6 +41,7 @@ describe("Conversa - assumir", () => {
     "aguardando_cliente",
     "pagamento_aprovado",
     "aguardando_forms",
+    "encaminhado",
     "resolvida",
   ])("rejeita assumir a partir de %s", (status) => {
     const conversa = criarConversa(status);
@@ -65,6 +66,7 @@ describe("Conversa - devolverParaBot", () => {
     "aguardando_cliente",
     "pagamento_aprovado",
     "aguardando_forms",
+    "encaminhado",
     "resolvida",
   ])("rejeita devolverParaBot a partir de %s", (status) => {
     const conversa = criarConversa(status);
@@ -86,6 +88,7 @@ describe("Conversa - aguardarCliente", () => {
     "aguardando_cliente",
     "pagamento_aprovado",
     "aguardando_forms",
+    "encaminhado",
     "resolvida",
   ])("rejeita aguardarCliente a partir de %s", (status) => {
     const conversa = criarConversa(status);
@@ -94,7 +97,7 @@ describe("Conversa - aguardarCliente", () => {
 });
 
 describe("Conversa - resolver", () => {
-  it.each<StatusConversa>(["em_atendimento", "aguardando_cliente"])("move %s -> resolvida", (status) => {
+  it.each<StatusConversa>(["em_atendimento", "aguardando_cliente", "encaminhado"])("move %s -> resolvida", (status) => {
     const conversa = criarConversa(status);
     conversa.resolver(USUARIO_ID);
     expect(conversa.status).toBe("resolvida");
@@ -129,10 +132,37 @@ describe("Conversa - encaminharParaFinanceiro", () => {
     "aguardando_cliente",
     "pagamento_aprovado",
     "aguardando_forms",
+    "encaminhado",
     "resolvida",
   ])("rejeita encaminharParaFinanceiro a partir de %s", (status) => {
     const conversa = criarConversa(status);
     expect(() => conversa.encaminharParaFinanceiro(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
+  });
+});
+
+describe("Conversa - encaminhar", () => {
+  it.each<StatusConversa>(["aguardando_humano", "em_atendimento", "aguardando_forms"])(
+    "move %s -> encaminhado",
+    (status) => {
+      const conversa = criarConversa(status);
+      conversa.encaminhar(USUARIO_ID);
+      expect(conversa.status).toBe("encaminhado");
+      expect(conversa.extrairEventosPendentes()).toEqual([
+        { tipo: "conversa_encaminhada", detalhes: { usuario_id: USUARIO_ID } },
+      ]);
+    },
+  );
+
+  it.each<StatusConversa>([
+    "ativa",
+    "aguardando_financeiro",
+    "aguardando_cliente",
+    "pagamento_aprovado",
+    "encaminhado",
+    "resolvida",
+  ])("rejeita encaminhar a partir de %s", (status) => {
+    const conversa = criarConversa(status);
+    expect(() => conversa.encaminhar(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
   });
 });
 
@@ -162,6 +192,7 @@ describe("Conversa - confirmarPagamento", () => {
     "aguardando_cliente",
     "pagamento_aprovado",
     "aguardando_forms",
+    "encaminhado",
     "resolvida",
   ])("rejeita confirmarPagamento a partir de %s", (status) => {
     const conversa = criarConversa(status);
@@ -180,7 +211,7 @@ describe("Conversa - pagamento_aprovado e aguardando_forms são terminais do lad
     expect(() => conversa.moverPara("pagamento_aprovado", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });
 
-  it("rejeita mover a partir de aguardando_forms (bot-owned, o painel nunca escreve nele)", () => {
+  it("rejeita mover de aguardando_forms direto pra resolvida (só via encaminhado)", () => {
     const conversa = criarConversa("aguardando_forms");
     expect(() => conversa.moverPara("resolvida", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });
@@ -211,10 +242,27 @@ describe("Conversa - moverPara (drag-and-drop genérico)", () => {
     expect(conversa.status).toBe("aguardando_cliente");
   });
 
-  it.each<StatusConversa>(["em_atendimento", "aguardando_cliente"])("%s -> resolvida é permitido via drag", (status) => {
-    const conversa = criarConversa(status);
-    conversa.moverPara("resolvida", USUARIO_ID, AGORA);
-    expect(conversa.status).toBe("resolvida");
+  it.each<StatusConversa>(["em_atendimento", "aguardando_cliente", "encaminhado"])(
+    "%s -> resolvida é permitido via drag",
+    (status) => {
+      const conversa = criarConversa(status);
+      conversa.moverPara("resolvida", USUARIO_ID, AGORA);
+      expect(conversa.status).toBe("resolvida");
+    },
+  );
+
+  it.each<StatusConversa>(["aguardando_humano", "em_atendimento", "aguardando_forms"])(
+    "%s -> encaminhado é permitido via drag",
+    (status) => {
+      const conversa = criarConversa(status);
+      conversa.moverPara("encaminhado", USUARIO_ID, AGORA);
+      expect(conversa.status).toBe("encaminhado");
+    },
+  );
+
+  it("rejeita 'encaminhado' como alvo do drag a partir de aguardando_cliente", () => {
+    const conversa = criarConversa("aguardando_cliente");
+    expect(() => conversa.moverPara("encaminhado", USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });
 
   it("nunca aceita 'ativa' como alvo do drag genérico (só devolverParaBot pode)", () => {
@@ -274,6 +322,17 @@ describe("Conversa - podeTransicionarPara (consulta pura para o front)", () => {
 
   it("reporta false para aguardando_financeiro a partir de aguardando_cliente", () => {
     expect(criarConversa("aguardando_cliente").podeTransicionarPara("aguardando_financeiro")).toBe(false);
+  });
+
+  it("reporta true para encaminhado a partir de aguardando_humano, em_atendimento ou aguardando_forms", () => {
+    expect(criarConversa("aguardando_humano").podeTransicionarPara("encaminhado")).toBe(true);
+    expect(criarConversa("em_atendimento").podeTransicionarPara("encaminhado")).toBe(true);
+    expect(criarConversa("aguardando_forms").podeTransicionarPara("encaminhado")).toBe(true);
+    expect(criarConversa("aguardando_cliente").podeTransicionarPara("encaminhado")).toBe(false);
+  });
+
+  it("reporta true para resolvida a partir de encaminhado", () => {
+    expect(criarConversa("encaminhado").podeTransicionarPara("resolvida")).toBe(true);
   });
 
   it("não altera estado (é side-effect free)", () => {

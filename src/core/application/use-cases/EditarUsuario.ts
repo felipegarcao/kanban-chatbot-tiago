@@ -1,5 +1,6 @@
 import { UsuarioNaoEncontrado } from "@/core/domain/errors/DomainError";
 import { garantirAdmin } from "@/core/domain/permissoes";
+import type { Hasher } from "@/core/application/ports/Hasher";
 import type { UsuarioRepository } from "@/core/application/ports/UsuarioRepository";
 import type { Papel } from "@/core/domain/Usuario";
 
@@ -9,10 +10,15 @@ export interface EditarUsuarioInput {
   nome?: string;
   papelNovo?: Papel;
   ativo?: boolean;
+  senhaNova?: string;
 }
 
+/** Só um admin chega aqui (`garantirAdmin`); por isso a troca de senha não exige a senha atual — é um reset administrativo, não o autoatendimento do próprio usuário. */
 export class EditarUsuario {
-  constructor(private readonly usuarios: UsuarioRepository) {}
+  constructor(
+    private readonly usuarios: UsuarioRepository,
+    private readonly hasher: Hasher,
+  ) {}
 
   async execute(input: EditarUsuarioInput): Promise<void> {
     garantirAdmin(input.papel);
@@ -26,6 +32,9 @@ export class EditarUsuario {
     if (input.ativo !== undefined) {
       if (input.ativo) usuario.ativar();
       else usuario.desativar();
+    }
+    if (input.senhaNova !== undefined) {
+      usuario.redefinirSenha(await this.hasher.hash(input.senhaNova));
     }
 
     await this.usuarios.salvar(usuario);

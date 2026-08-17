@@ -50,6 +50,7 @@ export async function PATCH(
       nome: corpo.data.nome,
       papelNovo: corpo.data.papel,
       ativo: corpo.data.ativo,
+      senhaNova: corpo.data.senhaNova,
     });
     return NextResponse.json({ ok: true });
   } catch (erro) {
