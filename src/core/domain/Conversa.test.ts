@@ -15,6 +15,7 @@ function criarConversa(status: StatusConversa, overrides: Partial<ConversaProps>
     iniciadaEm: new Date("2026-01-01T10:00:00Z"),
     ultimaMensagemEm: new Date("2026-01-01T10:05:00Z"),
     assumidaEm: null,
+    finalizadaEm: null,
     ...overrides,
   };
   return Conversa.reconstituir(props);
@@ -97,11 +98,15 @@ describe("Conversa - aguardarCliente", () => {
 });
 
 describe("Conversa - resolver", () => {
-  it.each<StatusConversa>(["em_atendimento", "aguardando_cliente", "encaminhado"])("move %s -> resolvida", (status) => {
-    const conversa = criarConversa(status);
-    conversa.resolver(USUARIO_ID);
-    expect(conversa.status).toBe("resolvida");
-  });
+  it.each<StatusConversa>(["em_atendimento", "aguardando_cliente", "encaminhado"])(
+    "move %s -> resolvida e registra finalizadaEm",
+    (status) => {
+      const conversa = criarConversa(status);
+      conversa.resolver(USUARIO_ID, AGORA);
+      expect(conversa.status).toBe("resolvida");
+      expect(conversa.finalizadaEm).toBe(AGORA);
+    },
+  );
 
   it.each<StatusConversa>([
     "ativa",
@@ -112,7 +117,7 @@ describe("Conversa - resolver", () => {
     "resolvida",
   ])("rejeita resolver a partir de %s", (status) => {
     const conversa = criarConversa(status);
-    expect(() => conversa.resolver(USUARIO_ID)).toThrow(TransicaoDeStatusInvalida);
+    expect(() => conversa.resolver(USUARIO_ID, AGORA)).toThrow(TransicaoDeStatusInvalida);
   });
 });
 
@@ -243,11 +248,12 @@ describe("Conversa - moverPara (drag-and-drop genérico)", () => {
   });
 
   it.each<StatusConversa>(["em_atendimento", "aguardando_cliente", "encaminhado"])(
-    "%s -> resolvida é permitido via drag",
+    "%s -> resolvida é permitido via drag e registra finalizadaEm",
     (status) => {
       const conversa = criarConversa(status);
       conversa.moverPara("resolvida", USUARIO_ID, AGORA);
       expect(conversa.status).toBe("resolvida");
+      expect(conversa.finalizadaEm).toBe(AGORA);
     },
   );
 

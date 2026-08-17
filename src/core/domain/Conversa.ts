@@ -92,6 +92,7 @@ export interface ConversaProps {
   iniciadaEm: Date | null;
   ultimaMensagemEm: Date | null;
   assumidaEm: Date | null;
+  finalizadaEm: Date | null;
   /** Trecho de exibição, não é invariante de domínio — carregado só nas listagens do kanban. */
   ultimaMensagemTrecho?: string | null;
 }
@@ -139,6 +140,10 @@ export class Conversa {
 
   get assumidaEm(): Date | null {
     return this.props.assumidaEm;
+  }
+
+  get finalizadaEm(): Date | null {
+    return this.props.finalizadaEm;
   }
 
   get ultimaMensagemTrecho(): string | null {
@@ -197,11 +202,12 @@ export class Conversa {
   }
 
   /** em_atendimento | aguardando_cliente | encaminhado -> resolvida */
-  resolver(usuarioId: number): void {
+  resolver(usuarioId: number, agora: Date): void {
     this.aplicarTransicao("resolvida", ["em_atendimento", "aguardando_cliente", "encaminhado"], {
       tipo: "conversa_resolvida",
       detalhes: { usuario_id: usuarioId },
     });
+    this.props.finalizadaEm = agora;
   }
 
   /**
@@ -266,7 +272,7 @@ export class Conversa {
       return;
     }
     if (novoStatus === "resolvida") {
-      this.resolver(usuarioId);
+      this.resolver(usuarioId, agora);
       return;
     }
     if (novoStatus === "aguardando_financeiro") {

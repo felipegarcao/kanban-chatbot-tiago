@@ -93,6 +93,7 @@ export function conversaDeTeste(overrides: Partial<ConversaProps> = {}): Convers
     iniciadaEm: new Date("2026-01-01T10:00:00Z"),
     ultimaMensagemEm: new Date("2026-01-01T10:05:00Z"),
     assumidaEm: null,
+    finalizadaEm: null,
     ...overrides,
   };
 }

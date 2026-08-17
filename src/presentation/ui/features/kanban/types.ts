@@ -12,6 +12,7 @@ export interface ConversaResumo {
   iniciadaEm: string | null;
   ultimaMensagemEm: string | null;
   assumidaEm: string | null;
+  finalizadaEm: string | null;
   ultimaMensagemTrecho: string | null;
 }
 

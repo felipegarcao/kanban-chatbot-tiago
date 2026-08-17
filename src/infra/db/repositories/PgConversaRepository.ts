@@ -8,10 +8,10 @@ import type { Conversa } from "@/core/domain/Conversa";
 import { paraDominio, type ConversaRow } from "@/infra/db/mappers/conversaMapper";
 
 const COLUNAS = `id, sistema_id, bot, contato_nome, contato_telefone, status, estado, prioridade,
-  iniciada_em, ultima_mensagem_em, assumida_em`;
+  iniciada_em, ultima_mensagem_em, assumida_em, finalizada_em`;
 
 const COLUNAS_COM_TRECHO = `c.id, c.sistema_id, c.bot, c.contato_nome, c.contato_telefone, c.status, c.estado,
-  c.prioridade, c.iniciada_em, c.ultima_mensagem_em, c.assumida_em,
+  c.prioridade, c.iniciada_em, c.ultima_mensagem_em, c.assumida_em, c.finalizada_em,
   LEFT(ultima_msg.conteudo, 140) AS ultima_mensagem_trecho`;
 
 /** Rank usado para ordenar "prioridade DESC": crítica antes de normal (não é ordem alfabética). */
@@ -119,8 +119,8 @@ export class PgConversaRepository implements ConversaRepository {
   async salvar(conversa: Conversa): Promise<void> {
     const props = conversa.toProps();
     await this.db.query(
-      `UPDATE felipe_system.conversas SET status = $2, assumida_em = $3 WHERE id = $1`,
-      [props.id, props.status, props.assumidaEm],
+      `UPDATE felipe_system.conversas SET status = $2, assumida_em = $3, finalizada_em = $4 WHERE id = $1`,
+      [props.id, props.status, props.assumidaEm, props.finalizadaEm],
     );
   }
 }

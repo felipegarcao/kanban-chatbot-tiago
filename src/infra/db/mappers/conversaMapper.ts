@@ -12,6 +12,7 @@ export interface ConversaRow {
   iniciada_em: Date | null;
   ultima_mensagem_em: Date | null;
   assumida_em: Date | null;
+  finalizada_em: Date | null;
   ultima_mensagem_trecho?: string | null;
 }
 
@@ -28,6 +29,7 @@ export function paraDominio(row: ConversaRow): Conversa {
     iniciadaEm: row.iniciada_em,
     ultimaMensagemEm: row.ultima_mensagem_em,
     assumidaEm: row.assumida_em,
+    finalizadaEm: row.finalizada_em,
     ultimaMensagemTrecho: row.ultima_mensagem_trecho ?? null,
   });
 }

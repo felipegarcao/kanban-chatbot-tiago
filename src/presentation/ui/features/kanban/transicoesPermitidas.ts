@@ -18,6 +18,7 @@ export function alvosPermitidos(statusAtual: StatusConversa): StatusConversa[] {
     iniciadaEm: null,
     ultimaMensagemEm: null,
     assumidaEm: null,
+    finalizadaEm: null,
   });
 
   const TODOS: StatusConversa[] = [
